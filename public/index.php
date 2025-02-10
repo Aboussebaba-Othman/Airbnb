@@ -2,27 +2,20 @@
 session_start();
 require_once '../vendor/autoload.php';
 
-// Charger les variables d'environnement
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
 $dotenv->load();
 
-// Créer l'instance du routeur
 $router = new Core\Router();
 
-// Charger les routes
 $routes = require_once '../config/routes.php';
 
-// Ajouter les routes
 foreach ($routes as $route => $params) {
     list($method, $path) = explode('|', $route);
     list($controller, $action) = explode('@', $params);
     $router->add($path, $controller, $action);
 }
 
-// Récupérer l'URL actuelle
 $url = trim($_SERVER['REQUEST_URI'], '/');
-
-// Debug info
 
 try {
     $router->dispatch($url);
