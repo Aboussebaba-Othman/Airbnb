@@ -5,17 +5,25 @@ use Core\Controller;
 use App\Models\User;
 use Core\Session;
 use Core\Validation;
+use App\Services\SocialAuthService;
 
 class AuthController extends Controller {
     protected User $userModel;
     protected Session $session;
     protected Validation $validation;
+    private $socialAuth;
 
     public function __construct() {
         parent::__construct();
         $this->userModel = new User();
         $this->session = new Session();
         $this->validation = new Validation();
+        $this->socialAuth = new SocialAuthService();
+    }
+
+    public function googleAuth() {
+        $authUrl = $this->socialAuth->getGoogleAuthUrl();
+        $this->redirect($authUrl);
     }
 
     public function login() {
@@ -177,6 +185,60 @@ class AuthController extends Controller {
         }
 
         return false;
+    }
+    protected function getRoleId($roleName) {
+        $roles = [
+            'admin' => 1,        // ID 1 pour admin
+            'voyageur' => 2,     // ID 2 pour voyageur
+            'proprietaire' => 3   // ID 3 pour proprietaire
+        ];
+
+        return $roles[strtolower($roleName)] ?? 2; // Par défaut voyageur (ID 2)
+    }
+
+
+
+    public function googleCallback() {
+        try {
+            $userData = $this->socialAuth->handleGoogleCallback($_GET['code']);
+            
+            // Vérifier si l'utilisateur existe
+            $user = $this->userModel->findByEmail($userData['email']);
+            
+            if (!$user) {
+                // Créer un nouvel utilisateur
+                $this->userModel->create([
+                    'username' => $userData['name'],
+                    'email' => $userData['email'],
+                    'password' => bin2hex(random_bytes(32)), // Mot de passe aléatoire
+                    'role_id' => 2, // Rôle voyageur par défaut
+                    'photo' => $userData['picture']
+                ]);
+                $user = $this->userModel->findByEmail($userData['email']);
+            }
+
+            $this->session->setUserData($user);
+            $this->redirectBasedOnRole();
+
+        } catch (\Exception $e) {
+            $this->session->setFlash('error', 'Erreur lors de la connexion avec Google');
+            $this->redirect('/login');
+        }
+    }
+
+    public function facebookAuth() {
+        $authUrl = $this->socialAuth->getFacebookAuthUrl();
+        $this->redirect($authUrl);
+    }
+
+    public function facebookCallback() {
+        try {
+            $userData = $this->socialAuth->handleFacebookCallback($_GET['code']);
+            // Même logique que googleCallback...
+        } catch (\Exception $e) {
+            $this->session->setFlash('error', 'Erreur lors de la connexion avec Facebook');
+            $this->redirect('/login');
+        }
     }
 
    

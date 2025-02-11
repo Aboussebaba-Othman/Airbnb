@@ -28,7 +28,7 @@ class Session {
         $this->set('user_role_id', $user['role_id']);
         $this->set('username', $user['username']);
     }
-
+    
     public function getUserRole() {
         return $this->get('user_role');
     }

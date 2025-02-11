@@ -1,6 +1,5 @@
 <?php
 namespace App\Controllers;
-
 use Core\Controller;
 
 class HomeController extends Controller {
@@ -14,7 +13,7 @@ class HomeController extends Controller {
                 case 'admin':
                     $this->redirect('/admin/dashboard');
                     break;
-                case 'Propriétaire':
+                case 'proprietaire':
                     $this->redirect('/owner/dashboard');
                     break;
                 case 'voyageur':
@@ -22,8 +21,7 @@ class HomeController extends Controller {
                     break;
             }
         }
-
-        return $this->view('/index', [
+        return $this->view('home/index', [
             'title' => 'Accueil'
         ]);
     }

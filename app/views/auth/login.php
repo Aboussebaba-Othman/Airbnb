@@ -52,6 +52,30 @@
                         </a>
                     </p>
                 </div>
+                <!-- Dans app/views/auth/login.php -->
+<div class="mt-6">
+    <div class="relative">
+        <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-300"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+            <span class="px-2 bg-white text-gray-500">Ou continuer avec</span>
+        </div>
+    </div>
+
+    <div class="mt-6 grid grid-cols-2 gap-3">
+        <a href="/auth/google" 
+           class="flex justify-center items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+            <img class="h-5 w-5" src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
+            <span class="ml-2">Google</span>
+        </a>
+        <a href="/auth/facebook"
+           class="flex justify-center items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+            <img class="h-5 w-5" src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook">
+            <span class="ml-2">Facebook</span>
+        </a>
+    </div>
+</div>
             </div>
         </div>
     </section>
