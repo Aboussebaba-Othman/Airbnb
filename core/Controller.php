@@ -5,6 +5,7 @@ abstract class Controller {
     protected $view;
 
     public function __construct() {
+        ob_start();
     }
 
     protected function view($view, $data = []) {
@@ -32,12 +33,14 @@ abstract class Controller {
     }
 
     protected function json($data) {
+        ob_clean();
         header('Content-Type: application/json');
         echo json_encode($data);
     }
 
     protected function redirect($url) {
-        header("Location: $url");
+        ob_clean();
+        header("Location:$url");
         exit;
     }
 

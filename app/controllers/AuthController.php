@@ -19,47 +19,41 @@ class AuthController extends Controller {
     }
 
     public function login() {
-        if ($this->session->isLoggedIn()) {
-            $this->redirectBasedOnRole();
-            return;
-        }
-
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
                 'email' => $_POST['email'] ?? '',
                 'password' => $_POST['password'] ?? ''
             ];
-
-            $rules = [
-                'email' => ['required', 'email'],
-                'password' => ['required', 'min:6']
-            ];
-
-            if (!$this->validation->validate($data, $rules)) {
-                return $this->view('auth/login', [
-                    'errors' => $this->validation->getErrors(),
-                    'email' => $data['email']
-                ]);
-            }
-
+    
             $user = $this->userModel->findByEmail($data['email']);
-            if (!$user || $data['password'] !== $user['password']) {
+            
+            error_log("User data: " . print_r($user, true));
+    
+            if (!$user || !password_verify($data['password'], $user['password'])) {
                 $this->session->setFlash('error', 'Email ou mot de passe incorrect');
                 return $this->view('auth/login', [
                     'email' => $data['email']
                 ]);
             }
-
+    
             $this->session->setUserData($user);
+            
+            
+            error_log("Role in session: " . $this->session->getUserRole());
+            
             $this->redirectBasedOnRole();
             return;
         }
-
+    
         return $this->view('auth/login');
     }
 
     protected function redirectBasedOnRole() {
-        switch(strtolower($this->session->getUserRole())) {
+        $role = strtolower($this->session->getUserRole());
+        
+        error_log("Role de l'utilisateur : " . $role);
+
+        switch($role) {
             case 'admin':
                 $this->redirect('/admin/dashboard');
                 break;
@@ -70,6 +64,9 @@ class AuthController extends Controller {
                 $this->redirect('/traveler/dashboard');
                 break;
             default:
+                var_dump("test");
+                exit;
+                error_log("Role non reconnu : " . $role);
                 $this->redirect('/');
         }
     }
@@ -79,4 +76,108 @@ class AuthController extends Controller {
         $this->session->setFlash('success', 'Vous avez été déconnecté');
         $this->redirect('/login');
     }
+    
+
+
+
+
+
+    public function register() {
+        if ($this->session->isLoggedIn()) {
+            $this->redirectBasedOnRole();
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = [
+                'username' => $_POST['username'] ?? '',
+                'email' => $_POST['email'] ?? '',
+                'password' => $_POST['password'] ?? '',
+                'password_confirm' => $_POST['password_confirm'] ?? '',
+                'role' => $_POST['role'] ?? 'voyageur', 
+                'description' => $_POST['description'] ?? ''
+            ];
+
+            $rules = [
+                'username' => ['required'],
+                'email' => ['required', 'email'],
+                'password' => ['required', 'min:6'],
+                'password_confirm' => ['required'],
+                'role' => ['required']
+            ];
+
+            if (!$this->validation->validate($data, $rules)) {
+                return $this->view('auth/register', [
+                    'errors' => $this->validation->getErrors(),
+                    'old' => $data
+                ]);
+            }
+
+            if ($data['password'] !== $data['password_confirm']) {
+                $this->session->setFlash('error', 'Les mots de passe ne correspondent pas');
+                return $this->view('auth/register', ['old' => $data]);
+            }
+
+            if ($this->userModel->findByEmail($data['email'])) {
+                $this->session->setFlash('error', 'Cet email est déjà utilisé');
+                return $this->view('auth/register', ['old' => $data]);
+            }
+
+            $photo = null;
+            if (isset($_FILES['photo']) && $_FILES['photo']['error'] === 0) {
+                $photo = $this->handlePhotoUpload($_FILES['photo']);
+                if (!$photo) {
+                    $this->session->setFlash('error', 'Erreur lors de l\'upload de la photo');
+                    return $this->view('auth/register', ['old' => $data]);
+                }
+            }
+
+            $userData = [
+                'username' => $data['username'],
+                'email' => $data['email'],
+                'password' => password_hash($data['password'], PASSWORD_DEFAULT),
+                'role_id' => $this->getRoleId($data['role']),
+                'photo' => $photo,
+                'description' => $data['description']
+            ];
+
+            if ($this->userModel->create($userData)) {
+                $this->session->setFlash('success', 'Compte créé avec succès. Vous pouvez maintenant vous connecter.');
+                $this->redirect('/login');
+            } else {
+                $this->session->setFlash('error', 'Erreur lors de la création du compte');
+                return $this->view('auth/register', ['old' => $data]);
+            }
+        }
+
+        return $this->view('auth/register');
+    }
+
+    protected function handlePhotoUpload($file) {
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+        $maxSize = 5 * 1024 * 1024; 
+
+        if (!in_array($file['type'], $allowedTypes)) {
+            return false;
+        }
+
+        if ($file['size'] > $maxSize) {
+            return false;
+        }
+
+        $uploadDir = 'assets/uploads/profiles/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        $fileName = uniqid() . '_' . basename($file['name']);
+        $destination = $uploadDir . $fileName;
+
+        if (move_uploaded_file($file['tmp_name'], $destination)) {
+            return $fileName;
+        }
+
+        return false;
+    }
+
+   
 }

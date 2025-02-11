@@ -13,16 +13,23 @@ class Router {
     }
 
     public static function dispatch() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
         $url = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
         $method = $_SERVER['REQUEST_METHOD'];
+        // echo "URL demandée: " . $url . "<br>";
+        // echo "Méthode: " . $method . "<br>";
+        // echo "Routes disponibles: <pre>";
+        // print_r(self::$routes);
+        // echo "</pre>";
+
+        error_log("URL demandée: " . $url);
+        error_log("Méthode: " . $method);
 
         if (isset(self::$routes[$method][$url])) {
             $controller = self::$routes[$method][$url]['controller'];
             $action = self::$routes[$method][$url]['method'];
+
+            error_log("Contrôleur: " . $controller);
+            error_log("Action: " . $action);
 
             if (class_exists($controller)) {
                 $controllerInstance = new $controller();
@@ -32,13 +39,9 @@ class Router {
             }
         }
 
+        // Page non trouvée
         http_response_code(404);
-        $errorPath = dirname(__DIR__) . '/app/views/errors/404.php';
-        
-        if (file_exists($errorPath)) {
-            include $errorPath;
-        } else {
-            echo "404 - Page Not Found";
-        }
+        include dirname(__DIR__) . '/app/views/errors/404.php';
+        exit;
     }
 }

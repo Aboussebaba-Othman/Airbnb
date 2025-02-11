@@ -3,9 +3,7 @@ namespace Core;
 
 class Session {
     public function __construct() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+
     }
 
     public function set(string $key, $value): void {
@@ -27,15 +25,16 @@ class Session {
     public function setUserData(array $user): void {
         $this->set('user_id', $user['id']);
         $this->set('user_role', $user['role_title']);
+        $this->set('user_role_id', $user['role_id']);
         $this->set('username', $user['username']);
+    }
+
+    public function getUserRole() {
+        return $this->get('user_role');
     }
 
     public function isLoggedIn(): bool {
         return isset($_SESSION['user_id']);
-    }
-
-    public function getUserRole(): ?string {
-        return $this->get('user_role');
     }
 
     public function setFlash(string $key, string $message): void {
