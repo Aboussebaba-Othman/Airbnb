@@ -1,13 +1,14 @@
-# Activer la réécriture d'URL
 RewriteEngine On
-
-# Définir le fichier index par défaut
-# DirectoryIndex index.php
-
-# Rediriger toutes les requêtes vers index.php sauf si le fichier ou le dossier existe
-
-
 RewriteBase /
+
+# If the requested file/directory doesn't exist
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+
+# Route everything through index.php
 RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Prevent direct access to .php files except index.php
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s([^.]+)\.php [NC]
+RewriteCond %{REQUEST_FILENAME} !^/index\.php
+RewriteRule ^ - [F]

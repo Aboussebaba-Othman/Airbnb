@@ -1,29 +1,20 @@
 <?php
-session_start();
-require_once '../vendor/autoload.php';
+require '../vendor/autoload.php';
+require '../config/routes.php';
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
-$dotenv->load();
-
-$router = new Core\Router();
-
-$routes = require_once '../config/routes.php';
-
-foreach ($routes as $route => $params) {
-    list($method, $path) = explode('|', $route);
-    list($controller, $action) = explode('@', $params);
-    $router->add($path, $controller, $action);
+// Remove any existing output buffers
+while (ob_get_level()) {
+    ob_end_clean();
 }
 
-$url = trim($_SERVER['REQUEST_URI'], '/');
+// Start a new output buffer
+ob_start();
 
-try {
-    $router->dispatch($url);
-} catch (\Exception $e) {
-    echo "Erreur: " . $e->getMessage();
-}
+Core\Router::dispatch();
 
+ob_end_flush();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
