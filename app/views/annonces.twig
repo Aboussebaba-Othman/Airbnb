@@ -1,0 +1,21 @@
+{% extends 'base.twig' %}
+
+{% block title %}Toutes les annonces{% endblock %}
+
+{% block content %}
+    <h2 class="text-2xl font-semibold mb-6">Nos annonces disponibles</h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for annonce in annonces %}
+            <div class="bg-white p-4 rounded-lg shadow-md">
+                <img src="/public/assets/image/image_1.avif" alt="{{ annonce.title }}" class="w-full h-40 object-cover rounded-md mb-4">
+                <h3 class="text-xl font-semibold mb-2">{{ annonce.title }}</h3>
+                <p class="text-gray-600 mb-2">{{ annonce.description }}</p>
+                <p class="font-semibold text-blue-500">{{ annonce.prix }} €</p>
+                <a href="/reservation/{{ annonce.id }}" class="inline-block mt-4 bg-blue-500 text-white px-4 py-2 rounded-md">Réserver</a>
+            </div>
+        {% else %}
+            <p>Aucune annonce disponible.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

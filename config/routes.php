@@ -1,11 +1,17 @@
 <?php
-return [
-    'GET|' => 'HomeController@index',
-    'GET|login' => 'AuthController@login',
-    'POST|login' => 'AuthController@login',
-    'GET|register' => 'AuthController@register',
-    'POST|register' => 'AuthController@register',
-    'GET|logout' => 'AuthController@logout',
-    'GET|admin/dashboard' => 'DashboardController@index'
-    
-];
+use Core\Router;
+
+Router::add('/', 'HomeController', 'index');
+Router::add('/login', 'AuthController', 'login');
+Router::add('/reserver', 'ReservationController', 'reserver');
+Router::add('/payer', 'ReservationController', 'payer');
+Router::add('/annonces', 'AnnonceController', 'index');
+Router::add('/reservation', 'ReservationController', 'details');
+
+
+
+
+
+
+
+?>

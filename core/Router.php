@@ -1,40 +1,20 @@
 <?php
-namespace Core;
-
+namespace Core ;
 class Router {
-    private $routes = [];
+    private static $routes = [];
 
-    public function add($route, $controller, $action) {
-        $this->routes[$route] = [
-            'controller' => $controller,
-            'action' => $action
-        ];
+    public static function add($route, $controller, $method) {
+        self::$routes[$route] = ['controller' => $controller, 'method' => $method];
     }
 
-    public function dispatch($url) {
-        $url = $this->removeQueryString($url);
-        
-        if (array_key_exists($url, $this->routes)) {
-            $controllerPath = str_replace('/', '\\', $this->routes[$url]['controller']);
-            $controller = "App\\Controllers\\" . $controllerPath;
-            $action = $this->routes[$url]['action'];
-    
-            if (class_exists($controller)) {
-                $controllerInstance = new $controller();
-                if (method_exists($controllerInstance, $action)) {
-                    return $controllerInstance->$action();
-                }
-            }
-            throw new \Exception("Controller or action not found: $controller@$action");
+    public static function dispatch($url) {
+        if (isset(self::$routes[$url])) {
+            $controller = "App\\controllers\\" . self::$routes[$url]['controller'];
+            $method = self::$routes[$url]['method'];
+            (new $controller())->$method();
+        } else {
+            echo "404 - Page not found";
         }
-        throw new \Exception("No route found for URL: " . $url);
-    }
-
-    private function removeQueryString($url) {
-        if ($url != '') {
-            $parts = explode('?', $url);
-            return $parts[0];
-        }
-        return $url;
     }
 }
+?>

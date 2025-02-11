@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mon Application{% endblock %}</title>
+
+    <!-- Ajouter Tailwind CSS via CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    {% block head %}{% endblock %}
+</head>
+
+<body class="bg-gray-100 text-gray-900">
+
+    <!-- Header commun (menu, logo, etc.) -->
+    <header class="bg-blue-500 text-white py-4">
+        <div class="container mx-auto">
+            <h1 class="text-3xl">Mon Application</h1>
+        </div>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="container mx-auto py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer commun -->
+    <footer class="bg-blue-500 text-white py-4 mt-8">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2025 Mon Application</p>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>
