@@ -71,7 +71,6 @@ class SocialAuthService {
             throw new \Exception('Failed to get access token');
         }
 
-        // Obtenir les informations de l'utilisateur
         $graph_url = "https://graph.facebook.com/v12.0/me?" . http_build_query([
             'fields' => 'id,name,email,picture',
             'access_token' => $data['access_token']

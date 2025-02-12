@@ -188,12 +188,12 @@ class AuthController extends Controller {
     }
     protected function getRoleId($roleName) {
         $roles = [
-            'admin' => 1,        // ID 1 pour admin
-            'voyageur' => 2,     // ID 2 pour voyageur
-            'proprietaire' => 3   // ID 3 pour proprietaire
+            'admin' => 1,       
+            'voyageur' => 2,     
+            'proprietaire' => 3   
         ];
 
-        return $roles[strtolower($roleName)] ?? 2; // Par défaut voyageur (ID 2)
+        return $roles[strtolower($roleName)] ?? 2;
     }
 
 
@@ -202,16 +202,14 @@ class AuthController extends Controller {
         try {
             $userData = $this->socialAuth->handleGoogleCallback($_GET['code']);
             
-            // Vérifier si l'utilisateur existe
             $user = $this->userModel->findByEmail($userData['email']);
             
             if (!$user) {
-                // Créer un nouvel utilisateur
                 $this->userModel->create([
                     'username' => $userData['name'],
                     'email' => $userData['email'],
-                    'password' => bin2hex(random_bytes(32)), // Mot de passe aléatoire
-                    'role_id' => 2, // Rôle voyageur par défaut
+                    'password' => bin2hex(random_bytes(32)), 
+                    'role_id' => 2, 
                     'photo' => $userData['picture']
                 ]);
                 $user = $this->userModel->findByEmail($userData['email']);
@@ -234,7 +232,6 @@ class AuthController extends Controller {
     public function facebookCallback() {
         try {
             $userData = $this->socialAuth->handleFacebookCallback($_GET['code']);
-            // Même logique que googleCallback...
         } catch (\Exception $e) {
             $this->session->setFlash('error', 'Erreur lors de la connexion avec Facebook');
             $this->redirect('/login');

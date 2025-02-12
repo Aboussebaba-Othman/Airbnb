@@ -46,7 +46,6 @@
                         <?php endif; ?>
                     </div>
 
-                    <!-- Rôle -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700">
                             Je suis un

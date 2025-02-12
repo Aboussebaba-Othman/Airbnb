@@ -52,7 +52,6 @@
                         </a>
                     </p>
                 </div>
-                <!-- Dans app/views/auth/login.php -->
 <div class="mt-6">
     <div class="relative">
         <div class="absolute inset-0 flex items-center">
