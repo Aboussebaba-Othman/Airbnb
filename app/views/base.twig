@@ -1,39 +1,42 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Mon Application{% endblock %}</title>
+    <title>{% block title %}AlfMabrok{% endblock %}</title>
 
-    <!-- Ajouter Tailwind CSS via CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
     {% block head %}{% endblock %}
 </head>
+<body class="bg-gray-50 text-gray-900">
 
-<body class="bg-gray-100 text-gray-900">
+    <!-- 🔥 NAVBAR MODERNE -->
+    <header class="bg-white shadow-md py-4">
+        <div class="container mx-auto flex justify-between items-center px-6">
+            <!-- Logo -->
+            <a href="/" class="text-2xl font-bold text-red-500">Airbnb</a>
 
-    <!-- Header commun (menu, logo, etc.) -->
-    <header class="bg-blue-500 text-white py-4">
-        <div class="container mx-auto">
-            <h1 class="text-3xl">Mon Application</h1>
+            <!-- Menu -->
+            <nav class="flex items-center space-x-6">
+                <a href="/annonces" class="text-gray-700 hover:text-red-500">Annonces</a>
+                <a href="/reservation" class="text-gray-700 hover:text-red-500">Réservations</a>
+                <a href="/login" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">Se connecter</a>
+            </nav>
         </div>
     </header>
 
-    <!-- Contenu principal -->
-    <main class="container mx-auto py-8">
+    <!-- 🔥 CONTENU PRINCIPAL -->
+    <main class="container mx-auto py-10 px-6">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer commun -->
-    <footer class="bg-blue-500 text-white py-4 mt-8">
-        <div class="container mx-auto text-center">
-            <p>&copy; 2025 Mon Application</p>
-        </div>
+    <!-- 🔥 FOOTER MODERNE -->
+    <footer class="bg-gray-100 text-gray-700 py-6 mt-10 text-center">
+        <p>&copy; 2025 AlfMabrok. Tous droits réservés.</p>
     </footer>
 
     {% block scripts %}{% endblock %}
 </body>
-
 </html>
