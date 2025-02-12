@@ -25,7 +25,7 @@ class User extends Model {
         return $stmt->execute([
             'username' => $data['username'],
             'email' => $data['email'],
-            'password' => $data['password'], // Déjà hashé dans AuthController
+            'password' => $data['password'], 
             'role_id' => $data['role_id'],
             'photo' => $data['photo'] ?? null,
             'description' => $data['description'] ?? null

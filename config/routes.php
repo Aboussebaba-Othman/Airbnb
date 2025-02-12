@@ -21,5 +21,3 @@ Router::add('GET', 'auth/facebook/callback', 'AuthController', 'facebookCallback
 
 Router::add('GET', 'auth/complete-registration', 'AuthController', 'completeRegistration');
 Router::add('POST', 'auth/complete-registration', 'AuthController', 'completeRegistration');
-// Dans config/routes.php
-// Router::add('GET', 'auth/google/callback', 'AuthController', 'googleCallback');

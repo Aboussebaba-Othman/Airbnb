@@ -13,7 +13,7 @@
                     Compléter votre inscription
                 </h2>
                 <p class="mt-2 text-center text-sm text-gray-600">
-                    Choisissez votre rôle et définissez un mot de passe
+                    <?php echo htmlspecialchars($socialData['email']); ?>
                 </p>
             </div>
 
@@ -27,7 +27,7 @@
                 <div class="rounded-md shadow-sm -space-y-px">
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700">Je suis un</label>
-                        <select name="role" class="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <select name="role" required class="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                             <option value="voyageur">Voyageur</option>
                             <option value="proprietaire">Propriétaire</option>
                         </select>
@@ -39,7 +39,7 @@
                                class="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
 
-                    <div>
+                    <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700">Confirmer le mot de passe</label>
                         <input type="password" name="password_confirm" required 
                                class="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">

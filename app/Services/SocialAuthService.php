@@ -22,27 +22,11 @@ class SocialAuthService {
         $this->fbRedirectUri = $_ENV['FACEBOOK_REDIRECT_URI'];
     }
 
-    // public function getGoogleAuthUrl() {
-    //     $this->googleClient->setPrompt('select_account consent');
-    //     return $this->googleClient->createAuthUrl();
-    // }
-
     public function getGoogleAuthUrl() {
-        $this->googleClient->revokeToken(); // Révoquer tout token existant
-        $this->googleClient->setPrompt('select_account consent'); // Forcer la sélection du compte
+        $this->googleClient->revokeToken(); 
+        $this->googleClient->setPrompt('select_account consent'); 
         $this->googleClient->setAccessType('offline');
         return $this->googleClient->createAuthUrl();
-    }
-    public function getFacebookAuthUrl() {
-        $state = bin2hex(random_bytes(16));
-        $_SESSION['fb_state'] = $state;
-        
-        return "https://www.facebook.com/v12.0/dialog/oauth?" . http_build_query([
-            'client_id' => $this->fbAppId,
-            'redirect_uri' => $this->fbRedirectUri,
-            'state' => $state,
-            'scope' => 'email'
-        ]);
     }
 
     public function handleGoogleCallback($code) {
@@ -59,37 +43,45 @@ class SocialAuthService {
         ];
     }
 
+    public function getFacebookAuthUrl() {
+        $state = bin2hex(random_bytes(16));
+        $_SESSION['fb_state'] = $state;
+
+        return 'https://www.facebook.com/v12.0/dialog/oauth?' . http_build_query([
+            'client_id' => $this->fbAppId,
+            'redirect_uri' => $this->fbRedirectUri,
+            'state' => $state,
+            'scope' => 'email'
+        ]);
+    }
+
     public function handleFacebookCallback($code) {
         if (!isset($_SESSION['fb_state']) || $_GET['state'] !== $_SESSION['fb_state']) {
-            throw new \Exception('Invalid state parameter');
+            throw new \Exception('État invalide');
         }
 
-        $token_url = "https://graph.facebook.com/v12.0/oauth/access_token?" . http_build_query([
+        $tokenUrl = "https://graph.facebook.com/v12.0/oauth/access_token";
+        $response = file_get_contents($tokenUrl . '?' . http_build_query([
             'client_id' => $this->fbAppId,
             'client_secret' => $this->fbAppSecret,
             'redirect_uri' => $this->fbRedirectUri,
             'code' => $code
-        ]);
+        ]));
 
-        $response = file_get_contents($token_url);
-        $data = json_decode($response, true);
+        $accessToken = json_decode($response, true)['access_token'];
 
-        if (!isset($data['access_token'])) {
-            throw new \Exception('Failed to get access token');
-        }
-
-        $graph_url = "https://graph.facebook.com/v12.0/me?" . http_build_query([
+        $graphUrl = "https://graph.facebook.com/v12.0/me";
+        $response = file_get_contents($graphUrl . '?' . http_build_query([
             'fields' => 'id,name,email,picture',
-            'access_token' => $data['access_token']
-        ]);
+            'access_token' => $accessToken
+        ]));
 
-        $response = file_get_contents($graph_url);
-        $user_data = json_decode($response, true);
+        $userData = json_decode($response, true);
 
         return [
-            'email' => $user_data['email'] ?? null,
-            'name' => $user_data['name'] ?? null,
-            'picture' => $user_data['picture']['data']['url'] ?? null
+            'email' => $userData['email'] ?? null,
+            'name' => $userData['name'] ?? null,
+            'picture' => $userData['picture']['data']['url'] ?? null
         ];
     }
 }
