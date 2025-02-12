@@ -11,7 +11,7 @@ Router::add('GET', 'logout', 'AuthController', 'logout');
 
 Router::add('GET', 'admin/dashboard', 'AdminDashboardController', 'index');
 Router::add('GET', 'owner/dashboard', 'OwnerDashboardController', 'index');
-Router::add('GET', 'traveler/dashboard', 'TravelerDashboardController', 'index');
+Router::add('GET', 'traveler/dashboard', 'TravelerController', 'index');
 
 Router::add('GET', 'auth/google', 'AuthController', 'googleAuth');
 Router::add('GET', 'auth/google/callback', 'AuthController', 'googleCallback');
