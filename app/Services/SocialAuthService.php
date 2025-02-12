@@ -22,10 +22,17 @@ class SocialAuthService {
         $this->fbRedirectUri = $_ENV['FACEBOOK_REDIRECT_URI'];
     }
 
+    // public function getGoogleAuthUrl() {
+    //     $this->googleClient->setPrompt('select_account consent');
+    //     return $this->googleClient->createAuthUrl();
+    // }
+
     public function getGoogleAuthUrl() {
+        $this->googleClient->revokeToken(); // Révoquer tout token existant
+        $this->googleClient->setPrompt('select_account consent'); // Forcer la sélection du compte
+        $this->googleClient->setAccessType('offline');
         return $this->googleClient->createAuthUrl();
     }
-
     public function getFacebookAuthUrl() {
         $state = bin2hex(random_bytes(16));
         $_SESSION['fb_state'] = $state;

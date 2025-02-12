@@ -19,7 +19,24 @@ class Session {
     }
 
     public function destroy(): void {
+        // Effacer toutes les variables de session
+        $_SESSION = array();
+    
+        // Détruire le cookie de session
+        if (isset($_COOKIE[session_name()])) {
+            setcookie(session_name(), '', time()-3600, '/');
+        }
+    
+        // Détruire la session
         session_destroy();
+    
+        // Régénérer l'ID de session
+        session_start();
+        session_regenerate_id(true);
+    }
+
+    public function regenerate(): void {
+        session_regenerate_id(true);
     }
 
     public function setUserData(array $user): void {

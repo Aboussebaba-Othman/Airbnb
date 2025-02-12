@@ -20,7 +20,6 @@ class AuthController extends Controller {
         $this->validation = new Validation();
         $this->socialAuth = new SocialAuthService();
     }
-
     public function googleAuth() {
         $authUrl = $this->socialAuth->getGoogleAuthUrl();
         $this->redirect($authUrl);
@@ -80,9 +79,20 @@ class AuthController extends Controller {
     }
 
     public function logout() {
-        $this->session->destroy();
-        $this->session->setFlash('success', 'Vous avez été déconnecté');
-        $this->redirect('/login');
+        // Effacer la session
+        $_SESSION = array();
+        
+        // Détruire le cookie de session
+        if (isset($_COOKIE[session_name()])) {
+            setcookie(session_name(), '', time()-3600, '/');
+        }
+        
+        // Détruire la session
+        session_destroy();
+        
+        // Redirection directe vers la page de login
+        header('Location: /login');
+        exit();
     }
     
 
@@ -199,29 +209,93 @@ class AuthController extends Controller {
 
 
     public function googleCallback() {
-        try {
-            $userData = $this->socialAuth->handleGoogleCallback($_GET['code']);
-            
-            $user = $this->userModel->findByEmail($userData['email']);
-            
-            if (!$user) {
-                $this->userModel->create([
-                    'username' => $userData['name'],
-                    'email' => $userData['email'],
-                    'password' => bin2hex(random_bytes(32)), 
-                    'role_id' => 2, 
-                    'photo' => $userData['picture']
-                ]);
-                $user = $this->userModel->findByEmail($userData['email']);
-            }
-
+    try {
+        $userData = $this->socialAuth->handleGoogleCallback($_GET['code']);
+        
+        // Vérifier si l'email existe déjà
+        $user = $this->userModel->findByEmail($userData['email']);
+        
+        if ($user) {
+            // L'utilisateur existe déjà, connectez-le directement
             $this->session->setUserData($user);
             $this->redirectBasedOnRole();
+        } else {
+            // Nouvel utilisateur, stocker les données temporairement en session
+            $this->session->set('temp_google_data', [
+                'email' => $userData['email'],
+                'name' => $userData['name'],
+                'picture' => $userData['picture']
+            ]);
+            
+            // Rediriger vers le formulaire de choix de rôle
+            $this->redirect('/auth/complete-registration');
+        }
 
         } catch (\Exception $e) {
-            $this->session->setFlash('error', 'Erreur lors de la connexion avec Google');
-            $this->redirect('/login');
+        $this->session->setFlash('error', 'Erreur lors de la connexion avec Google');
+        $this->redirect('/login');
         }
+    }
+
+public function completeRegistration() {
+    if (!$this->session->get('temp_google_data')) {
+        $this->redirect('/login');
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $data = [
+            'role' => $_POST['role'] ?? '',
+            'password' => $_POST['password'] ?? '',
+            'password_confirm' => $_POST['password_confirm'] ?? ''
+        ];
+
+        $rules = [
+            'role' => ['required'],
+            'password' => ['required', 'min:6'],
+            'password_confirm' => ['required']
+        ];
+
+        if (!$this->validation->validate($data, $rules)) {
+            return $this->view('auth/complete-registration', [
+                'errors' => $this->validation->getErrors()
+            ]);
+        }
+
+        if ($data['password'] !== $data['password_confirm']) {
+            $this->session->setFlash('error', 'Les mots de passe ne correspondent pas');
+            return $this->view('auth/complete-registration');
+        }
+
+        $googleData = $this->session->get('temp_google_data');
+        
+        // Créer l'utilisateur
+        $userData = [
+            'username' => $googleData['name'],
+            'email' => $googleData['email'],
+            'password' => password_hash($data['password'], PASSWORD_DEFAULT),
+            'role_id' => $this->getRoleId($data['role']),
+            'photo' => $googleData['picture']
+        ];
+
+        if ($this->userModel->create($userData)) {
+            // Supprimer les données temporaires
+            $this->session->remove('temp_google_data');
+            
+            // Connecter l'utilisateur
+            $user = $this->userModel->findByEmail($googleData['email']);
+            $this->session->setUserData($user);
+            
+            $this->session->setFlash('success', 'Compte créé avec succès');
+            $this->redirectBasedOnRole();
+        } else {
+            $this->session->setFlash('error', 'Erreur lors de la création du compte');
+            return $this->view('auth/complete-registration');
+        }
+        }
+
+        return $this->view('auth/complete-registration', [
+        'googleData' => $this->session->get('temp_google_data')
+        ]);
     }
 
     public function facebookAuth() {
