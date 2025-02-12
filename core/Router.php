@@ -8,13 +8,19 @@ class Router {
     }
 
     public static function dispatch($url) {
-        if (isset(self::$routes[$url])) {
-            $controller = "App\\controllers\\" . self::$routes[$url]['controller'];
-            $method = self::$routes[$url]['method'];
-            (new $controller())->$method();
-        } else {
-            echo "404 - Page not found";
+        foreach (self::$routes as $route => $target) {
+            $pattern = preg_replace('/\{[a-zA-Z0-9_]+\}/', '([0-9]+)', $route);
+            if (preg_match("#^$pattern$#", $url, $matches)) {
+                array_shift($matches);
+                $controller = "App\\controllers\\" . $target['controller'];
+                $method = $target['method'];
+                (new $controller())->$method(...$matches);
+                return;
+            }
         }
+        echo "404 - Page not found";
     }
+
 }
+    
 ?>

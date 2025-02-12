@@ -22,6 +22,6 @@ class View
             self::init();
         }
 
-        echo self::$twig->render($template, $data); // Suppression du ".twig"
+        echo self::$twig->render($template, $data); 
     }
 }
