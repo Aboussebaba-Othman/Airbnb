@@ -1,9 +1,20 @@
-<?php
+<?php 
 namespace Core;
 
 class Session {
-    public function __construct() {
+    private static ?Session $instance = null;
 
+    private function __construct() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+    }
+
+    public static function getInstance(): Session {
+        if (self::$instance === null) {
+            self::$instance = new Session();
+        }
+        return self::$instance;
     }
 
     public function set(string $key, $value): void {

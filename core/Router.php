@@ -15,11 +15,7 @@ class Router {
     public static function dispatch() {
         $url = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
         $method = $_SERVER['REQUEST_METHOD'];
-        // echo "URL demandée: " . $url . "<br>";
-        // echo "Méthode: " . $method . "<br>";
-        // echo "Routes disponibles: <pre>";
-        // print_r(self::$routes);
-        // echo "</pre>";
+    
 
         error_log("URL demandée: " . $url);
         error_log("Méthode: " . $method);
@@ -39,7 +35,6 @@ class Router {
             }
         }
 
-        // Page non trouvée
         http_response_code(404);
         include dirname(__DIR__) . '/app/views/errors/404.php';
         exit;

@@ -7,16 +7,16 @@
     <title>Connexion - Airbnb</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'airbnb': '#FF385C',
-                        'airbnb-dark': '#E31C5F',
-                    }
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    'airbnb': '#FF385C',
+                    'airbnb-dark': '#E31C5F',
                 }
             }
         }
+    }
     </script>
 </head>
 
@@ -25,8 +25,9 @@
         <header class="w-full bg-white border-b border-gray-200 px-4 py-4">
             <div class="max-w-screen-xl mx-auto">
                 <svg viewBox="0 0 32 32" class="h-8 w-8 text-airbnb">
-                    <path d="M16 1c2.008 0 3.463.963 4.751 3.269l.533 1.025c1.954 3.83 6.114 12.54 7.1 14.836l.145.353c.667 1.591.91 2.472.91 3.494 0 4.424-3.33 8.023-7.439 8.023-2.206 0-4.375-1.177-6-3.257-1.625 2.08-3.794 3.257-6 3.257-4.109 0-7.439-3.599-7.439-8.023 0-1.022.243-1.903.91-3.494l.145-.353c.986-2.297 5.146-11.007 7.1-14.836l.533-1.025C12.537 1.963 13.992 1 16 1zm0 2c-1.239 0-2.053.539-2.987 2.21l-.523 1.008c-1.926 3.776-6.06 12.43-7.031 14.692l-.345.836c-.427 1.071-.573 1.655-.573 2.292 0 3.575 2.706 6.484 6.011 6.484 1.742 0 3.456-.853 4.748-2.618l.7-.914.7.914c1.292 1.765 3.006 2.618 4.748 2.618 3.305 0 6.011-2.909 6.011-6.484 0-.637-.146-1.221-.573-2.292l-.345-.836c-.97-2.263-5.105-10.917-7.031-14.692l-.523-1.008C18.053 3.539 17.239 3 16 3z" 
-                    fill="currentColor">
+                    <path
+                        d="M16 1c2.008 0 3.463.963 4.751 3.269l.533 1.025c1.954 3.83 6.114 12.54 7.1 14.836l.145.353c.667 1.591.91 2.472.91 3.494 0 4.424-3.33 8.023-7.439 8.023-2.206 0-4.375-1.177-6-3.257-1.625 2.08-3.794 3.257-6 3.257-4.109 0-7.439-3.599-7.439-8.023 0-1.022.243-1.903.91-3.494l.145-.353c.986-2.297 5.146-11.007 7.1-14.836l.533-1.025C12.537 1.963 13.992 1 16 1zm0 2c-1.239 0-2.053.539-2.987 2.21l-.523 1.008c-1.926 3.776-6.06 12.43-7.031 14.692l-.345.836c-.427 1.071-.573 1.655-.573 2.292 0 3.575 2.706 6.484 6.011 6.484 1.742 0 3.456-.853 4.748-2.618l.7-.914.7.914c1.292 1.765 3.006 2.618 4.748 2.618 3.305 0 6.011-2.909 6.011-6.484 0-.637-.146-1.221-.573-2.292l-.345-.836c-.97-2.263-5.105-10.917-7.031-14.692l-.523-1.008C18.053 3.539 17.239 3 16 3z"
+                        fill="currentColor">
                     </path>
                 </svg>
             </div>
@@ -46,6 +47,9 @@
                             </label>
                             <input type="email" name="email" id="email" required
                                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-airbnb focus:border-airbnb px-4 py-3">
+                            <?php if (isset($errors['email'])): ?>
+                            <span class="error"><?php echo $errors['email']; ?></span>
+                            <?php endif; ?>
                         </div>
 
                         <div>
@@ -54,6 +58,9 @@
                             </label>
                             <input type="password" name="password" id="password" required
                                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-airbnb focus:border-airbnb px-4 py-3">
+                            <?php if (isset($errors['password'])): ?>
+                            <span class="error"><?php echo $errors['password']; ?></span>
+                            <?php endif; ?>
                         </div>
 
                         <div class="flex items-center justify-between">
@@ -90,12 +97,14 @@
                         <div class="mt-6 grid grid-cols-1 gap-3">
                             <a href="/auth/google"
                                 class="flex justify-center items-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200">
-                                <img class="h-5 w-5" src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
+                                <img class="h-5 w-5" src="https://www.svgrepo.com/show/475656/google-color.svg"
+                                    alt="Google">
                                 <span class="ml-2">Continuer avec Google</span>
                             </a>
                             <a href="/auth/facebook"
                                 class="flex justify-center items-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200">
-                                <img class="h-5 w-5" src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook">
+                                <img class="h-5 w-5" src="https://www.svgrepo.com/show/475647/facebook-color.svg"
+                                    alt="Facebook">
                                 <span class="ml-2">Continuer avec Facebook</span>
                             </a>
                         </div>

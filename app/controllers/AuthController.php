@@ -9,17 +9,18 @@ use App\Services\SocialAuthService;
 
 class AuthController extends Controller {
     protected User $userModel;
-    protected Session $session;
     protected Validation $validation;
-    private $socialAuth;
+    protected Session $session;
+    private SocialAuthService $socialAuth;
 
     public function __construct() {
         parent::__construct();
         $this->userModel = new User();
-        $this->session = new Session();
+        $this->session = Session::getInstance(); // Utilisation de Singleton
         $this->validation = new Validation();
         $this->socialAuth = new SocialAuthService();
     }
+
     public function googleAuth() {
         $authUrl = $this->socialAuth->getGoogleAuthUrl();
         $this->redirect($authUrl);
@@ -31,34 +32,26 @@ class AuthController extends Controller {
                 'email' => $_POST['email'] ?? '',
                 'password' => $_POST['password'] ?? ''
             ];
-    
+
             $user = $this->userModel->findByEmail($data['email']);
             
-            error_log("User data: " . print_r($user, true));
-    
             if (!$user || !password_verify($data['password'], $user['password'])) {
                 $this->session->setFlash('error', 'Email ou mot de passe incorrect');
                 return $this->view('auth/login', [
                     'email' => $data['email']
                 ]);
             }
-    
+
             $this->session->setUserData($user);
-            
-            
-            error_log("Role in session: " . $this->session->getUserRole());
-            
             $this->redirectBasedOnRole();
             return;
         }
-    
+
         return $this->view('auth/login');
     }
 
     protected function redirectBasedOnRole() {
         $role = strtolower($this->session->getUserRole());
-        
-        error_log("Role de l'utilisateur : " . $role);
 
         switch($role) {
             case 'admin':
@@ -71,30 +64,15 @@ class AuthController extends Controller {
                 $this->redirect('/traveler/dashboard');
                 break;
             default:
-                var_dump("test");
-                exit;
                 error_log("Role non reconnu : " . $role);
                 $this->redirect('/');
         }
     }
 
     public function logout() {
-        $_SESSION = array();
-        
-        if (isset($_COOKIE[session_name()])) {
-            setcookie(session_name(), '', time()-3600, '/');
-        }
-        
-        session_destroy();
-        
-        header('Location: /login');
-        exit();
+        $this->session->destroy();
+        $this->redirect('/login');
     }
-    
-
-
-
-
 
     public function register() {
         if ($this->session->isLoggedIn()) {
@@ -107,7 +85,7 @@ class AuthController extends Controller {
                 'email' => $_POST['email'] ?? '',
                 'password' => $_POST['password'] ?? '',
                 'password_confirm' => $_POST['password_confirm'] ?? '',
-                'role' => $_POST['role'] ?? 'voyageur', 
+                'role' => $_POST['role'] ?? 'voyageur',
                 'description' => $_POST['description'] ?? ''
             ];
 
@@ -168,7 +146,7 @@ class AuthController extends Controller {
 
     protected function handlePhotoUpload($file) {
         $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-        $maxSize = 5 * 1024 * 1024; 
+        $maxSize = 5 * 1024 * 1024;
 
         if (!in_array($file['type'], $allowedTypes)) {
             return false;
@@ -192,6 +170,7 @@ class AuthController extends Controller {
 
         return false;
     }
+
     protected function getRoleId($roleName) {
         $roles = [
             'admin' => 1,       
@@ -201,8 +180,6 @@ class AuthController extends Controller {
 
         return $roles[strtolower($roleName)] ?? 2;
     }
-
-
 
     public function googleCallback() {
     try {

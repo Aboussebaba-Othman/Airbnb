@@ -46,7 +46,6 @@
                     <?php endif; ?>
 
                     <form method="POST" action="/register" enctype="multipart/form-data" class="space-y-6">
-                        <!-- Nom d'utilisateur -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Nom d'utilisateur</label>
                             <input type="text" name="username"
