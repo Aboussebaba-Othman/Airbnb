@@ -16,19 +16,7 @@ class User extends Model {
         
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
-   
-    public function create($data) {
-        $query = "INSERT INTO users (username, email, password, role_id, photo, description) 
-                 VALUES (:username, :email, :password, :role_id, :photo, :description)";
-        
-        $stmt = $this->db->prepare($query);
-        return $stmt->execute([
-            'username' => $data['username'],
-            'email' => $data['email'],
-            'password' => $data['password'], 
-            'role_id' => $data['role_id'],
-            'photo' => $data['photo'] ?? null,
-            'description' => $data['description'] ?? null
-        ]);
+    public function count() {
+        return $this->queryScalar("SELECT COUNT(*) FROM {$this->table}");
     }
 }
