@@ -4,7 +4,7 @@ namespace App\controllers;
 
 use App\models\AnnonceModel;
 use App\models\ReservationModel;
-use Core\View\View;
+use Core\View;
 
 class AnnonceController {
     public function index() {

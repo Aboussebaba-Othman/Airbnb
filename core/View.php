@@ -1,5 +1,5 @@
 <?php
-namespace Core\View;
+namespace Core;
 
 use Twig\Loader\FilesystemLoader;
 use Twig\Environment;

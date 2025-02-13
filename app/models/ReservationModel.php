@@ -16,7 +16,7 @@ public function __construct()
 
 public function getAnnonceById($id){
     try{
-         $sql = 'SELECT * From annonces where id = :id';
+    $sql = 'SELECT * From annonces where id = :id';
     $stmt = $this->con->prepare($sql);
     $stmt->bindParam('id', $id);
     $stmt->execute();
@@ -37,13 +37,12 @@ public function getAnnonceById($id){
 
 public function addReservation($userId, $annonceId, $dateDebut, $dateFin, $nbChambres) {
     try {
-        $sql = "INSERT INTO reservations (user_id, logement_id, datedebut, datefin, statut, nb_chambres)
-                VALUES (:user_id, :logement_id, :datedebut, :datefin, 'en attente', :nb_chambres) 
+        $sql = "INSERT INTO reservations ( reservationdate, datedebut, datefin, user_id, logement_id,statut,nbrchambres)
+                VALUES (CURRENT_DATE, :datedebut, :datefin, :user_id,:logement_id,'en attante' , :nb_chambres) 
                 RETURNING id";
 
         $stmt = $this->con->prepare($sql);
 
-        // Correction : Ajout de ":" devant les clés dans `bindParam`
         $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
         $stmt->bindParam(':logement_id', $annonceId, PDO::PARAM_INT);
         $stmt->bindParam(':datedebut', $dateDebut);
@@ -52,15 +51,22 @@ public function addReservation($userId, $annonceId, $dateDebut, $dateFin, $nbCha
 
         $stmt->execute();
 
-      
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result ? $result['id'] : false; 
+
+      
+        if (!$result) {
+            var_dump($stmt->errorInfo());
+            die();
+        }
+
+        return $result ? $result['id'] : false;
 
     } catch (PDOException $e) {
         error_log("Erreur d'ajout réservation: " . $e->getMessage());
         return false;
     }
 }
+
 
 }
 

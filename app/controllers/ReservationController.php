@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\ReservationModel;
-use Core\View\View;
+use Core\View;
 
 class ReservationController
 {
@@ -22,13 +22,16 @@ class ReservationController
     }
 
     public function reserver() {
-        Session::start(); 
+        // var_dump($_POST); 
+        // die(); 
+        
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $userId = 4; // Remplace cela par Session::get('user_id') lorsque l'auth fonctionne
-            
-            // Vérifier que les champs ne sont pas vides
+            $userId = 4;
+
             if (!isset($_POST['annonce_id'], $_POST['datedebut'], $_POST['datefin'], $_POST['nb_chambres'])) {
                 die("Erreur : Données invalides.");
+                var_dump('error');
+                
             }
     
             $annonceId = intval($_POST['annonce_id']);
