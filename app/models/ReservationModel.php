@@ -24,19 +24,43 @@ public function getAnnonceById($id){
         if($row){
         return $row;
         } else {
-        return false;  // Return false if no data is found
+        return false;  
     }
     }
         catch (PDOException $e) {
             echo 'error get annonce';
             error_log(" error get annonce" . $e->getMessage());
             return false;
-        }
+        } 
     
-   
 }
 
+public function addReservation($userId, $annonceId, $dateDebut, $dateFin, $nbChambres) {
+    try {
+        $sql = "INSERT INTO reservations (user_id, logement_id, datedebut, datefin, statut, nb_chambres)
+                VALUES (:user_id, :logement_id, :datedebut, :datefin, 'en attente', :nb_chambres) 
+                RETURNING id";
 
+        $stmt = $this->con->prepare($sql);
+
+        // Correction : Ajout de ":" devant les clés dans `bindParam`
+        $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+        $stmt->bindParam(':logement_id', $annonceId, PDO::PARAM_INT);
+        $stmt->bindParam(':datedebut', $dateDebut);
+        $stmt->bindParam(':datefin', $dateFin);
+        $stmt->bindParam(':nb_chambres', $nbChambres, PDO::PARAM_INT);
+
+        $stmt->execute();
+
+      
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ? $result['id'] : false; 
+
+    } catch (PDOException $e) {
+        error_log("Erreur d'ajout réservation: " . $e->getMessage());
+        return false;
+    }
 }
 
+}
 
