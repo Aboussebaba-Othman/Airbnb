@@ -48,4 +48,23 @@ class Annonce extends Model {
     private function getCount($table) {
         return $this->queryScalar("SELECT COUNT(*) FROM {$table}");
     }
+
+
+    public function getPendingAnnonces() {
+        $query = "SELECT a.*, u.username as owner_name, 
+                  COALESCE(AVG(av.note), 0) as rating,
+                  COUNT(DISTINCT r.id) as total_reservations
+                  FROM annonces a 
+                  LEFT JOIN users u ON a.owner_id = u.id 
+                  LEFT JOIN avis av ON a.id = av.logement_id
+                  LEFT JOIN reservations r ON a.id = r.logement_id
+                  GROUP BY a.id, u.username
+                  ORDER BY a.id DESC";
+        
+        return $this->query($query);
+    }
+    
+    public function updateValidation($id, $status) {
+        return $this->update($id, ['validate' => $status]);
+    }
 }

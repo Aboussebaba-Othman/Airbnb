@@ -43,9 +43,10 @@
                 <i class="fas fa-home w-6"></i>
                 <span>Tableau de bord</span>
             </a>
-            <a href="#" class="flex items-center space-x-3 py-3 px-4 rounded-lg hover:bg-white/10 transition">
-                <i class="fas fa-chart-line w-6"></i>
-                <span>Statistiques</span>
+            <a href="/admin/validation"
+                class="flex items-center space-x-3 py-3 px-4 rounded-lg hover:bg-white/10 transition">
+                <i class="fas fa-check-circle w-6"></i>
+                <span>Validation Annonces</span>
             </a>
             <a href="/admin/users"
                 class="flex items-center space-x-3 py-3 px-4 rounded-lg hover:bg-white/10 transition">

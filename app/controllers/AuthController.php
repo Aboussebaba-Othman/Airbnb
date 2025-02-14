@@ -79,20 +79,16 @@ class AuthController extends Controller {
             $this->redirectBasedOnRole();
         }
     
-        // Pour les requêtes GET, afficher simplement le formulaire
         if (!$this->isPost()) {
             return $this->view('auth/register');
         }
     
-        // Collecte des données du formulaire
         $data = $this->collectFormData();
     
-        // Validation des données
         if ($error = $this->validateRegistration($data)) {
             return $error;
         }
     
-        // Traitement de la photo si elle existe
         $photo = $this->processPhoto();
         if (is_string($photo) === false && $photo !== null) {
             return $this->view('auth/register', [
@@ -101,7 +97,6 @@ class AuthController extends Controller {
             ]);
         }
     
-        // Préparation et création de l'utilisateur
         $userData = [
             'username' => $data['username'],
             'email' => $data['email'],

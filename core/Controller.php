@@ -11,7 +11,7 @@ abstract class Controller {
     protected function view($view, $data = []) {
         extract($data);
 
-        $viewPath = "../app/views/" . $view . ".php";
+        $viewPath = "../app/views/" . $view . ".php";       
 
         if (file_exists($viewPath)) {
             ob_start();
