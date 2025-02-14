@@ -22,8 +22,7 @@ class ReservationController
     }
 
     public function reserver() {
-        // var_dump($_POST); 
-        // die(); 
+        
         
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $userId = 4;

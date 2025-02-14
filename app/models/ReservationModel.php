@@ -53,12 +53,6 @@ public function addReservation($userId, $annonceId, $dateDebut, $dateFin, $nbCha
 
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-      
-        if (!$result) {
-            var_dump($stmt->errorInfo());
-            die();
-        }
-
         return $result ? $result['id'] : false;
 
     } catch (PDOException $e) {
