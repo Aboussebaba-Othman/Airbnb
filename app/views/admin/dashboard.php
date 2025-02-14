@@ -47,7 +47,8 @@
                 <i class="fas fa-chart-line w-6"></i>
                 <span>Statistiques</span>
             </a>
-            <a href="#" class="flex items-center space-x-3 py-3 px-4 rounded-lg hover:bg-white/10 transition">
+            <a href="/admin/users"
+                class="flex items-center space-x-3 py-3 px-4 rounded-lg hover:bg-white/10 transition">
                 <i class="fas fa-users w-6"></i>
                 <span>Utilisateurs</span>
             </a>
@@ -84,7 +85,8 @@
                         <img src="/api/placeholder/48/48" alt="User Avatar" class="w-full h-full object-cover" />
                     </div>
                     <div>
-                        <span class="text-gray-800 font-semibold text-base block"><?php echo $_SESSION['username']; ?></span>
+                        <span
+                            class="text-gray-800 font-semibold text-base block"><?php echo $_SESSION['username']; ?></span>
                         <span class="text-gray-500 text-xs">Administrateur</span>
                     </div>
                 </div>

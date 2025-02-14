@@ -22,6 +22,15 @@ Router::add('GET', 'auth/facebook/callback', 'AuthController', 'facebookCallback
 Router::add('GET', 'auth/complete-registration', 'AuthController', 'completeRegistration');
 Router::add('POST', 'auth/complete-registration', 'AuthController', 'completeRegistration');
 
+// Router::add('GET', 'admin/users', 'UserController', 'index');
+
+Router::add('GET', 'admin/users', 'UserController', 'index');
+Router::add('GET', 'admin/users/delete/{id}', 'UserController', 'delete');
+Router::add('GET', 'admin/users/toggle-status/{id}', 'UserController', 'toggleStatus');
+
+
+
+
 
 
 
