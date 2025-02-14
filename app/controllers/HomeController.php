@@ -14,7 +14,7 @@ class HomeController extends Controller {
                     $this->redirect('/admin/dashboard');
                     break;
                 case 'proprietaire':
-                    $this->redirect('/owner/dashboard');
+                    $this->redirect('/property/index');
                     break;
                 case 'voyageur':
                     $this->redirect('/traveler/dashboard');

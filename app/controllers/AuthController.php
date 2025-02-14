@@ -11,14 +11,14 @@ class AuthController extends Controller {
     protected User $userModel;
     protected Validation $validation;
     protected Session $session;
-    private SocialAuthService $socialAuth;
+    // private SocialAuthService $socialAuth;
 
     public function __construct() {
         parent::__construct();
         $this->userModel = new User();
         $this->session = Session::getInstance(); // Utilisation de Singleton
         $this->validation = new Validation();
-        $this->socialAuth = new SocialAuthService();
+        // $this->socialAuth = new SocialAuthService();
     }
 
     public function googleAuth() {
@@ -58,7 +58,7 @@ class AuthController extends Controller {
                 $this->redirect('/admin/dashboard');
                 break;
             case 'proprietaire':
-                $this->redirect('/owner/dashboard');
+                $this->redirect('/property/index');
                 break;
             case 'voyageur':
                 $this->redirect('/traveler/dashboard');
@@ -181,122 +181,122 @@ class AuthController extends Controller {
         return $roles[strtolower($roleName)] ?? 2;
     }
 
-    public function googleCallback() {
-    try {
-        $userData = $this->socialAuth->handleGoogleCallback($_GET['code']);
+    // public function googleCallback() {
+    // try {
+    //     $userData = $this->socialAuth->handleGoogleCallback($_GET['code']);
         
-        $user = $this->userModel->findByEmail($userData['email']);
+    //     $user = $this->userModel->findByEmail($userData['email']);
         
-        if ($user) {
-            $this->session->setUserData($user);
-            $this->redirectBasedOnRole();
-        } else {
-            $this->session->set('temp_google_data', [
-                'email' => $userData['email'],
-                'name' => $userData['name'],
-                'picture' => $userData['picture']
-            ]);
+    //     if ($user) {
+    //         $this->session->setUserData($user);
+    //         $this->redirectBasedOnRole();
+    //     } else {
+    //         $this->session->set('temp_google_data', [
+    //             'email' => $userData['email'],
+    //             'name' => $userData['name'],
+    //             'picture' => $userData['picture']
+    //         ]);
             
-            $this->redirect('/auth/complete-registration');
-        }
+    //         $this->redirect('/auth/complete-registration');
+    //     }
 
-        } catch (\Exception $e) {
-        $this->session->setFlash('error', 'Erreur lors de la connexion avec Google');
-        $this->redirect('/login');
-        }
-    }
+    //     } catch (\Exception $e) {
+    //     $this->session->setFlash('error', 'Erreur lors de la connexion avec Google');
+    //     $this->redirect('/login');
+    //     }
+    // }
 
-    public function completeRegistration() {
-        $tempData = $this->session->get('temp_google_data') ?? $this->session->get('temp_facebook_data');
+    // public function completeRegistration() {
+    //     $tempData = $this->session->get('temp_google_data') ?? $this->session->get('temp_facebook_data');
         
-        if (!$tempData) {
-            $this->redirect('/login');
-        }
+    //     if (!$tempData) {
+    //         $this->redirect('/login');
+    //     }
     
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $data = [
-                'role' => $_POST['role'] ?? '',
-                'password' => $_POST['password'] ?? '',
-                'password_confirm' => $_POST['password_confirm'] ?? ''
-            ];
+    //     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    //         $data = [
+    //             'role' => $_POST['role'] ?? '',
+    //             'password' => $_POST['password'] ?? '',
+    //             'password_confirm' => $_POST['password_confirm'] ?? ''
+    //         ];
     
-            $rules = [
-                'role' => ['required'],
-                'password' => ['required', 'min:6'],
-                'password_confirm' => ['required']
-            ];
+    //         $rules = [
+    //             'role' => ['required'],
+    //             'password' => ['required', 'min:6'],
+    //             'password_confirm' => ['required']
+    //         ];
     
-            if (!$this->validation->validate($data, $rules)) {
-                return $this->view('auth/complete-registration', [
-                    'errors' => $this->validation->getErrors()
-                ]);
-            }
+    //         if (!$this->validation->validate($data, $rules)) {
+    //             return $this->view('auth/complete-registration', [
+    //                 'errors' => $this->validation->getErrors()
+    //             ]);
+    //         }
     
-            if ($data['password'] !== $data['password_confirm']) {
-                $this->session->setFlash('error', 'Les mots de passe ne correspondent pas');
-                return $this->view('auth/complete-registration');
-            }
+    //         if ($data['password'] !== $data['password_confirm']) {
+    //             $this->session->setFlash('error', 'Les mots de passe ne correspondent pas');
+    //             return $this->view('auth/complete-registration');
+    //         }
             
-            $userData = [
-                'username' => $tempData['name'],
-                'email' => $tempData['email'],
-                'password' => password_hash($data['password'], PASSWORD_DEFAULT),
-                'role_id' => $this->getRoleId($data['role']),
-                'photo' => $tempData['picture']
-            ];
+    //         $userData = [
+    //             'username' => $tempData['name'],
+    //             'email' => $tempData['email'],
+    //             'password' => password_hash($data['password'], PASSWORD_DEFAULT),
+    //             'role_id' => $this->getRoleId($data['role']),
+    //             'photo' => $tempData['picture']
+    //         ];
     
-            if ($this->userModel->create($userData)) {
-                $this->session->remove('temp_google_data');
-                $this->session->remove('temp_facebook_data');
+    //         if ($this->userModel->create($userData)) {
+    //             $this->session->remove('temp_google_data');
+    //             $this->session->remove('temp_facebook_data');
                 
-                $user = $this->userModel->findByEmail($tempData['email']);
-                $this->session->setUserData($user);
+    //             $user = $this->userModel->findByEmail($tempData['email']);
+    //             $this->session->setUserData($user);
                 
-                $this->session->setFlash('success', 'Compte créé avec succès');
-                $this->redirectBasedOnRole();
-            } else {
-                $this->session->setFlash('error', 'Erreur lors de la création du compte');
-                return $this->view('auth/complete-registration');
-            }
-        }
+    //             $this->session->setFlash('success', 'Compte créé avec succès');
+    //             $this->redirectBasedOnRole();
+    //         } else {
+    //             $this->session->setFlash('error', 'Erreur lors de la création du compte');
+    //             return $this->view('auth/complete-registration');
+    //         }
+    //     }
     
-        return $this->view('auth/complete-registration', [
-            'socialData' => $tempData
-        ]);
-    }
-    public function facebookAuth() {
-        $authUrl = $this->socialAuth->getFacebookAuthUrl();
-        $this->redirect($authUrl);
-    }
+    //     return $this->view('auth/complete-registration', [
+    //         'socialData' => $tempData
+    //     ]);
+    // }
+    // public function facebookAuth() {
+    //     $authUrl = $this->socialAuth->getFacebookAuthUrl();
+    //     $this->redirect($authUrl);
+    // }
     
-    public function facebookCallback() {
-        try {
-            if (!isset($_GET['code'])) {
-                throw new \Exception('Code Facebook manquant');
-            }
+    // public function facebookCallback() {
+    //     try {
+    //         if (!isset($_GET['code'])) {
+    //             throw new \Exception('Code Facebook manquant');
+    //         }
     
-            $userData = $this->socialAuth->handleFacebookCallback($_GET['code']);
+    //         $userData = $this->socialAuth->handleFacebookCallback($_GET['code']);
             
-            $user = $this->userModel->findByEmail($userData['email']);
+    //         $user = $this->userModel->findByEmail($userData['email']);
             
-            if ($user) {
-                $this->session->setUserData($user);
-                $this->redirectBasedOnRole();
-            } else {
-                $this->session->set('temp_facebook_data', [
-                    'email' => $userData['email'],
-                    'name' => $userData['name'],
-                    'picture' => $userData['picture']
-                ]);
+    //         if ($user) {
+    //             $this->session->setUserData($user);
+    //             $this->redirectBasedOnRole();
+    //         } else {
+    //             $this->session->set('temp_facebook_data', [
+    //                 'email' => $userData['email'],
+    //                 'name' => $userData['name'],
+    //                 'picture' => $userData['picture']
+    //             ]);
                 
-                $this->redirect('/auth/complete-registration');
-            }
+    //             $this->redirect('/auth/complete-registration');
+    //         }
     
-        } catch (\Exception $e) {
-            $this->session->setFlash('error', 'Erreur lors de la connexion avec Facebook');
-            $this->redirect('/login');
-        }
-    }
+    //     } catch (\Exception $e) {
+    //         $this->session->setFlash('error', 'Erreur lors de la connexion avec Facebook');
+    //         $this->redirect('/login');
+    //     }
+    // }
 
    
 }
