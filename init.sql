@@ -99,3 +99,23 @@ CREATE TABLE Promotions (
     date_fin DATE NOT NULL,
     FOREIGN KEY (annonce_id) REFERENCES Annonces(id) ON DELETE CASCADE
 );
+
+
+-- Insertion de 8 annonces (2 pour chaque catégorie)
+INSERT INTO Annonces (title, photo, ville, prix, equipements, description, categorie, disponibilites, validate, owner_id) 
+VALUES 
+-- Annonces pour Appartement
+('Appartement moderne avec vue sur mer', 'image_appartement.jpg', 'Nice', 120.50, '["Wi-Fi", "Climatisation", "Cuisine équipée"]', 'Bel appartement lumineux avec balcon et vue imprenable sur la mer.', 'Appartement', 'nonLouer', 'nonValider', 4),
+('Appartement cosy au centre-ville', 'image_appartement2.jpg', 'Lyon', 85.00, '["Wi-Fi", "Cuisine équipée", "TV"]', 'Charmant appartement au cœur de la ville, parfait pour un séjour urbain.', 'Appartement', 'nonLouer', 'nonValider', 4),
+
+-- Annonces pour Maison
+('Maison familiale avec jardin', 'image_maison.jpg', 'Marseille', 180.00, '["Wi-Fi", "Jardin", "Barbecue"]', 'Maison spacieuse idéale pour les familles, avec un grand jardin privé.', 'Maison', 'nonLouer', 'nonValider', 4),
+('Maison avec terrasse et vue sur montagne', 'image_maison2.jpg', 'Grenoble', 150.00, '["Wi-Fi", "Terrasse", "Cheminée"]', 'Maison chaleureuse avec terrasse offrant une vue magnifique sur les montagnes.', 'Maison', 'nonLouer', 'nonValider', 4),
+
+-- Annonces pour Villa
+('Villa de luxe avec piscine', 'image_villa.jpg', 'Cannes', 350.75, '["Piscine", "Wi-Fi", "Vue panoramique"]', 'Villa prestigieuse avec piscine à débordement et vue sur la baie.', 'Villa', 'nonLouer', 'nonValider', 4),
+('Villa contemporaine avec jacuzzi', 'image_villa2.jpg', 'Saint-Tropez', 400.00, '["Piscine", "Jacuzzi", "Vue mer"]', 'Villa moderne avec jacuzzi privé et vue imprenable sur la mer.', 'Villa', 'nonLouer', 'nonValider', 4),
+
+-- Annonces pour Cabane
+('Cabane dans les arbres', 'image_cabane.jpg', 'Annecy', 90.00, '["Nature", "Balcon", "Petit-déjeuner inclus"]', 'Cabane insolite dans les arbres pour une expérience unique en pleine nature.', 'Cabane', 'nonLouer', 'nonValider', 4),
+('Cabane rustique en pleine forêt', 'image_cabane2.jpg', 'Chamonix', 75.00, '["Nature", "Cheminée", "Randonnée"]', 'Cabane rustique idéale pour les amateurs de nature et de tranquillité.', 'Cabane', 'nonLouer', 'nonValider', 4);

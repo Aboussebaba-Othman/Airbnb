@@ -5,6 +5,7 @@ abstract class Controller {
     protected $view;
 
     public function __construct() {
+        
     }
 
     protected function view($view, $data = []) {

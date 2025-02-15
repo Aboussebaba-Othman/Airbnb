@@ -16,7 +16,7 @@ class PayPalService
 
     public function __construct()
     {
-        $paypalConfig = require 'config/paypal.php';
+        $paypalConfig = require realpath( $_SERVER["DOCUMENT_ROOT"] . '/../') . '/config/paypal.php';
         $this->apiContext = new ApiContext(
             new OAuthTokenCredential($paypalConfig['client_id'], $paypalConfig['client_secret'])
         );

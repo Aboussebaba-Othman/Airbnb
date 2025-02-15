@@ -43,8 +43,9 @@ class PaiementController
     {
         // Récupérer les détails de la réservation
         $reservationModel = new \App\Models\ReservationModel();
-        $reservation = $reservationModel->getReservationById($reservationId);
+        $reservation = $reservationModel->getAnnonceById($reservationId);
 
+        var_dump($reservation);
         if (!$reservation) {
             die("Réservation non trouvée.");
         }
@@ -53,7 +54,7 @@ class PaiementController
         $returnUrl = "http://votresite.com/paiement/success/$reservationId";
         $cancelUrl = "http://votresite.com/paiement/cancel/$reservationId";
         $approvalLink = $this->paypalService->createPayment(
-            $reservation['montant'],
+            $reservation['prix'],
             'EUR', // Devise
             "Paiement pour la réservation #$reservationId",
             $returnUrl,

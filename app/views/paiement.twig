@@ -24,10 +24,9 @@
 
         <!-- Bouton PayPal -->
         <div class="mb-4">
-            <form action="/paiement/{{ reservationId }}" method="POST">
+            <form method="POST" onsubmit="paymentransation(event)">
                 <button type="submit" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 flex items-center justify-center">
                     <img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-100px.png" alt="PayPal" class="h-6 mr-2">
-                    Payer avec PayPal
                 </button>
             </form>
         </div>
@@ -46,4 +45,13 @@
         <p>Vous serez redirigé vers PayPal pour finaliser votre paiement. Une fois le paiement confirmé, vous recevrez un e-mail de confirmation.</p>
     </div>
 </div>
+<link rel="stylesheet" href="https://cdn.pypal.com/css/styles.css">
+
+<script >
+
+function paymentransation(event){
+    event.preventDefault();
+
+}
+</script>
 {% endblock %}
