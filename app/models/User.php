@@ -16,19 +16,38 @@ class User extends Model {
         
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
-   
-    public function create($data) {
-        $query = "INSERT INTO users (username, email, password, role_id, photo, description) 
-                 VALUES (:username, :email, :password, :role_id, :photo, :description)";
+    public function count() {
+        return $this->queryScalar("SELECT COUNT(*) FROM {$this->table}");
+    }
+
+    public function getAllUsers() {
+        $query = "SELECT u.*, r.title as role_title, 
+                  COALESCE(u.status, 'active') as status
+                  FROM users u 
+                  LEFT JOIN roles r ON u.role_id = r.id 
+                  WHERE u.role_id != 1  
+                  ORDER BY u.id ASC";
         
+        return $this->query($query);
+    }
+
+    public function toggleStatus($userId, $status) {
+        $query = "UPDATE users SET status = :status WHERE id = :id";
         $stmt = $this->db->prepare($query);
         return $stmt->execute([
-            'username' => $data['username'],
-            'email' => $data['email'],
-            'password' => $data['password'], 
-            'role_id' => $data['role_id'],
-            'photo' => $data['photo'] ?? null,
-            'description' => $data['description'] ?? null
+            'status' => $status,
+            'id' => $userId
         ]);
+    }
+    public function update($id, $data) {
+        $fields = array_map(function($field) {
+            return "$field = :$field";
+        }, array_keys($data));
+    
+        $query = "UPDATE {$this->table} SET " . implode(", ", $fields) . " WHERE id = :id";
+        
+        $data['id'] = $id;
+        $stmt = $this->db->prepare($query);
+        return $stmt->execute($data);
     }
 }

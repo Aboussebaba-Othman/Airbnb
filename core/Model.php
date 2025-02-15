@@ -11,6 +11,12 @@ abstract class Model {
         $this->db = Database::getInstance();
     }
 
+    protected function queryScalar($query, $params = []) {
+        $stmt = $this->db->prepare($query);
+        $stmt->execute($params);
+        return $stmt->fetchColumn();
+    }
+
     public function find($id) {
         $query = "SELECT * FROM {$this->table} WHERE id = :id";
         $stmt = $this->db->prepare($query);

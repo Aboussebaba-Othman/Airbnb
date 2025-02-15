@@ -16,7 +16,7 @@ class AuthController extends Controller {
     public function __construct() {
         parent::__construct();
         $this->userModel = new User();
-        $this->session = Session::getInstance(); // Utilisation de Singleton
+        $this->session = Session::getInstance(); 
         $this->validation = new Validation();
         $this->socialAuth = new SocialAuthService();
     }
@@ -78,106 +78,119 @@ class AuthController extends Controller {
         if ($this->session->isLoggedIn()) {
             $this->redirectBasedOnRole();
         }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $data = [
-                'username' => $_POST['username'] ?? '',
-                'email' => $_POST['email'] ?? '',
-                'password' => $_POST['password'] ?? '',
-                'password_confirm' => $_POST['password_confirm'] ?? '',
-                'role' => $_POST['role'] ?? 'voyageur',
-                'description' => $_POST['description'] ?? ''
-            ];
-
-            $rules = [
-                'username' => ['required'],
-                'email' => ['required', 'email'],
-                'password' => ['required', 'min:6'],
-                'password_confirm' => ['required'],
-                'role' => ['required']
-            ];
-
-            if (!$this->validation->validate($data, $rules)) {
-                return $this->view('auth/register', [
-                    'errors' => $this->validation->getErrors(),
-                    'old' => $data
-                ]);
-            }
-
-            if ($data['password'] !== $data['password_confirm']) {
-                $this->session->setFlash('error', 'Les mots de passe ne correspondent pas');
-                return $this->view('auth/register', ['old' => $data]);
-            }
-
-            if ($this->userModel->findByEmail($data['email'])) {
-                $this->session->setFlash('error', 'Cet email est déjà utilisé');
-                return $this->view('auth/register', ['old' => $data]);
-            }
-
-            $photo = null;
-            if (isset($_FILES['photo']) && $_FILES['photo']['error'] === 0) {
-                $photo = $this->handlePhotoUpload($_FILES['photo']);
-                if (!$photo) {
-                    $this->session->setFlash('error', 'Erreur lors de l\'upload de la photo');
-                    return $this->view('auth/register', ['old' => $data]);
-                }
-            }
-
-            $userData = [
-                'username' => $data['username'],
-                'email' => $data['email'],
-                'password' => password_hash($data['password'], PASSWORD_DEFAULT),
-                'role_id' => $this->getRoleId($data['role']),
-                'photo' => $photo,
-                'description' => $data['description']
-            ];
-
-            if ($this->userModel->create($userData)) {
-                $this->session->setFlash('success', 'Compte créé avec succès. Vous pouvez maintenant vous connecter.');
-                $this->redirect('/login');
-            } else {
-                $this->session->setFlash('error', 'Erreur lors de la création du compte');
-                return $this->view('auth/register', ['old' => $data]);
-            }
+    
+        if (!$this->isPost()) {
+            return $this->view('auth/register');
         }
-
-        return $this->view('auth/register');
+    
+        $data = $this->collectFormData();
+    
+        if ($error = $this->validateRegistration($data)) {
+            return $error;
+        }
+    
+        $photo = $this->processPhoto();
+        if (is_string($photo) === false && $photo !== null) {
+            return $this->view('auth/register', [
+                'error' => 'Erreur lors de l\'upload de la photo',
+                'old' => $data
+            ]);
+        }
+    
+        $userData = [
+            'username' => $data['username'],
+            'email' => $data['email'],
+            'password' => password_hash($data['password'], PASSWORD_DEFAULT),
+            'role_id' => $this->getRoleId($data['role']),
+            'photo' => $photo,
+            'description' => $data['description']
+        ];
+    
+        if ($this->userModel->create($userData)) {
+            $this->session->setFlash('success', 'Compte créé avec succès. Vous pouvez maintenant vous connecter.');
+            return $this->redirect('/login');
+        }
+    
+        $this->session->setFlash('error', 'Erreur lors de la création du compte');
+        return $this->view('auth/register', ['old' => $data]);
     }
-
-    protected function handlePhotoUpload($file) {
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-        $maxSize = 5 * 1024 * 1024;
-
-        if (!in_array($file['type'], $allowedTypes)) {
-            return false;
+    
+    private function collectFormData() {
+        return [
+            'username' => $_POST['username'] ?? '',
+            'email' => $_POST['email'] ?? '',
+            'password' => $_POST['password'] ?? '',
+            'password_confirm' => $_POST['password_confirm'] ?? '',
+            'role' => $_POST['role'] ?? 'voyageur',
+            'description' => $_POST['description'] ?? ''
+        ];
+    }
+    
+    private function validateRegistration($data) {
+        $rules = [
+            'username' => ['required'],
+            'email' => ['required', 'email'],
+            'password' => ['required', 'min:6'],
+            'password_confirm' => ['required'],
+            'role' => ['required']
+        ];
+    
+        if (!$this->validation->validate($data, $rules)) {
+            return $this->view('auth/register', [
+                'errors' => $this->validation->getErrors(),
+                'old' => $data
+            ]);
         }
-
-        if ($file['size'] > $maxSize) {
-            return false;
+    
+        if ($data['password'] !== $data['password_confirm']) {
+            $this->session->setFlash('error', 'Les mots de passe ne correspondent pas');
+            return $this->view('auth/register', ['old' => $data]);
         }
-
-        $uploadDir = 'assets/uploads/profiles/';
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0777, true);
+    
+        if ($this->userModel->findByEmail($data['email'])) {
+            $this->session->setFlash('error', 'Cet email est déjà utilisé');
+            return $this->view('auth/register', ['old' => $data]);
         }
-
-        $fileName = uniqid() . '_' . basename($file['name']);
-        $destination = $uploadDir . $fileName;
-
-        if (move_uploaded_file($file['tmp_name'], $destination)) {
-            return $fileName;
-        }
-
+    
         return false;
     }
-
-    protected function getRoleId($roleName) {
-        $roles = [
-            'admin' => 1,       
-            'voyageur' => 2,     
-            'proprietaire' => 3   
+    
+    private function processPhoto() {
+        if (!isset($_FILES['photo']) || $_FILES['photo']['error'] !== 0) {
+            return null;
+        }
+    
+        $config = [
+            'maxSize' => 5 * 1024 * 1024,
+            'allowedTypes' => ['image/jpeg', 'image/png', 'image/jpg'],
+            'uploadDir' => 'assets/uploads/profiles/'
         ];
-
+    
+        if (!in_array($_FILES['photo']['type'], $config['allowedTypes'])) {
+            return false;
+        }
+    
+        if ($_FILES['photo']['size'] > $config['maxSize']) {
+            return false;
+        }
+    
+        if (!is_dir($config['uploadDir'])) {
+            mkdir($config['uploadDir'], 0777, true);
+        }
+    
+        $fileName = uniqid() . '_' . basename($_FILES['photo']['name']);
+        $destination = $config['uploadDir'] . $fileName;
+    
+        return move_uploaded_file($_FILES['photo']['tmp_name'], $destination) ? $fileName : false;
+    }
+    
+    private function getRoleId($roleName) {
+        $roles = [
+            'admin' => 1,
+            'voyageur' => 2,
+            'proprietaire' => 3
+        ];
+    
         return $roles[strtolower($roleName)] ?? 2;
     }
 
