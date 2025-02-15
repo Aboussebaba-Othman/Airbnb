@@ -5,7 +5,7 @@ use Core\Controller;
 use App\Models\Annonce;
 use Core\Session;
 
-class AnnonceController extends Controller {
+class AdminAnnonceController extends Controller {
     private $annonceModel;
     protected $session;
 
@@ -16,6 +16,11 @@ class AnnonceController extends Controller {
             $this->redirect('/login');
         }
         $this->annonceModel = new Annonce();
+    }
+     public function index() {
+        $annonceModel = new AnnonceModel();
+        $annonces = $annonceModel->getAll(); 
+        View::render('annonces.twig', ['annonces' => $annonces]);
     }
 
     public function validation() {
