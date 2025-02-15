@@ -1,0 +1,41 @@
+{% extends 'base.twig' %}
+
+{% block title %}Toutes les annonces{% endblock %}
+
+{% block content %}
+    <h2 class="text-3xl font-semibold mb-8">Découvrez nos annonces</h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for annonce in annonces %}
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transition transform hover:scale-105">
+                <img src="{{ annonce.photo }}" alt="{{ annonce.title }}" class="w-full h-56 object-cover">
+                <div class="p-5">
+                    <h3 class="text-lg font-bold mb-1">{{ annonce.title }}</h3>
+                    
+                    <!-- Rating -->
+                    <div class="flex items-center text-yellow-400 mb-2">
+                        {% for i in 1..5 %}
+                            {% if i <= annonce.rating %}
+                                <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.5 3.3 1.4-5.9L1 7.7l6-.5L10 2l3 5.2 6 .5-4.9 4.7 1.4 5.9z"></path>
+                                </svg>
+                            {% else %}
+                                <svg class="w-5 h-5 text-gray-300" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.5 3.3 1.4-5.9L1 7.7l6-.5L10 2l3 5.2 6 .5-4.9 4.7 1.4 5.9z"></path>
+                                </svg>
+                            {% endif %}
+                        {% endfor %}
+                        <span class="text-gray-600 ml-2">{{ annonce.rating }}/5</span>
+                    </div>
+
+                    <p class="text-gray-600 mb-3 truncate">{{ annonce.description }}</p>
+                    <p class="font-semibold text-lg text-red-500">{{ annonce.prix }} € / nuit</p>
+                    
+                    <a href="/reservation/{{ annonce.id }}" class="mt-4 block text-center bg-red-500 text-white py-2 rounded-lg hover:bg-red-600">Réserver</a>
+                </div>
+            </div>
+        {% else %}
+            <p class="text-gray-500 text-lg">Aucune annonce disponible.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

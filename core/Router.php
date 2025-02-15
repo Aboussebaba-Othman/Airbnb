@@ -42,3 +42,4 @@ class Router {
         require_once dirname(__DIR__) . '/app/views/errors/404.php';
     }
 }
+
