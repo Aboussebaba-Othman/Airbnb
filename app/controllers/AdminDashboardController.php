@@ -31,4 +31,5 @@ class AdminDashboardController extends Controller {
             'title' => 'Tableau de Bord Admin'
         ]);
     }
+    
 }

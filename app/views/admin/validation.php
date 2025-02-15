@@ -42,9 +42,10 @@
                 <i class="fas fa-home w-6"></i>
                 <span>Tableau de bord</span>
             </a>
-            <a href="#" class="flex items-center space-x-3 py-3 px-4 rounded-lg hover:bg-white/10 transition">
-                <i class="fas fa-chart-line w-6"></i>
-                <span>Statistiques</span>
+            <a href="/admin/validation"
+                class="flex items-center space-x-3 py-3 px-4 rounded-lg hover:bg-white/10 transition">
+                <i class="fas fa-check-circle w-6"></i>
+                <span>Validation Annonces</span>
             </a>
             <a href="/admin/users"
                 class="flex items-center space-x-3 py-3 px-4 rounded-lg hover:bg-white/10 transition">
@@ -91,14 +92,14 @@
                 </div>
             </div>
         </header>
-        <main class="flex-1 overflow-x-hidden overflow-y-auto ">
-            <div class="bg-white  shadow-lg p-6 mb-6">
+        <main class="flex-1 overflow-x-hidden overflow-y-auto">
+            <div class="bg-white shadow-lg p-6 mb-6">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold text-gray-800">Validation des Annonces</h2>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <?php foreach ($annonces as $annonce): ?>
-                    <div class="rounded-xl overflow-hidden shadow-md card">
+                    <div class="rounded-xl overflow-hidden shadow-md">
                         <img src="<?php echo $annonce['photo'] ?? '/api/placeholder/400/200'; ?>"
                             alt="<?php echo htmlspecialchars($annonce['title']); ?>" class="w-full h-48 object-cover" />
 
@@ -114,7 +115,7 @@
                                     <p class="text-gray-600"><?php echo htmlspecialchars($annonce['categorie']); ?></p>
                                 </div>
                                 <span
-                                    class="px-2 py-1 text-xs font-semibold 
+                                    class="px-2 py-1 text-xs font-semibold rounded-full 
                              <?php echo $annonce['validate'] === 'valider' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'; ?>">
                                     <?php echo $annonce['validate'] === 'valider' ? 'Validé' : 'En attente'; ?>
                                 </span>
@@ -161,5 +162,3 @@
         </main>
     </div>
 </body>
-
-</html>

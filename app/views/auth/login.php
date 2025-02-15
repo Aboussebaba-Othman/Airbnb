@@ -22,16 +22,35 @@
 
 <body class="bg-gray-50">
     <div class="min-h-screen flex flex-col">
-        <header class="w-full bg-white border-b border-gray-200 px-4 py-4">
-            <div class="max-w-screen-xl mx-auto">
-                <svg viewBox="0 0 32 32" class="h-8 w-8 text-airbnb">
-                    <path
-                        d="M16 1c2.008 0 3.463.963 4.751 3.269l.533 1.025c1.954 3.83 6.114 12.54 7.1 14.836l.145.353c.667 1.591.91 2.472.91 3.494 0 4.424-3.33 8.023-7.439 8.023-2.206 0-4.375-1.177-6-3.257-1.625 2.08-3.794 3.257-6 3.257-4.109 0-7.439-3.599-7.439-8.023 0-1.022.243-1.903.91-3.494l.145-.353c.986-2.297 5.146-11.007 7.1-14.836l.533-1.025C12.537 1.963 13.992 1 16 1zm0 2c-1.239 0-2.053.539-2.987 2.21l-.523 1.008c-1.926 3.776-6.06 12.43-7.031 14.692l-.345.836c-.427 1.071-.573 1.655-.573 2.292 0 3.575 2.706 6.484 6.011 6.484 1.742 0 3.456-.853 4.748-2.618l.7-.914.7.914c1.292 1.765 3.006 2.618 4.748 2.618 3.305 0 6.011-2.909 6.011-6.484 0-.637-.146-1.221-.573-2.292l-.345-.836c-.97-2.263-5.105-10.917-7.031-14.692l-.523-1.008C18.053 3.539 17.239 3 16 3z"
-                        fill="currentColor">
-                    </path>
-                </svg>
-            </div>
-        </header>
+    <header class="sticky top-0 bg-white shadow-sm z-50">
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="/" class="flex items-center space-x-2">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Airbnb_Logo_B%C3%A9lo.svg/800px-Airbnb_Logo_B%C3%A9lo.svg.png" alt="Logo Airbnb" class="h-8">
+        </a>
+
+        <div class="relative w-96">
+          <input
+            type="text"
+            placeholder="Rechercher..."
+            class="pl-10 pr-4 py-2 border rounded-full w-full focus:outline-none focus:ring-2 focus:ring-rose-500"
+          />
+          <svg class="absolute left-3 top-2.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.75 3.75a7.5 7.5 0 0012.9 12.9z"></path>
+          </svg>
+        </div>
+
+        <div class="flex space-x-4">
+          <a href="/register" class="bg-rose-500 text-white py-2 px-4 rounded-full hover:bg-rose-600 transition-colors">
+            S'inscrire
+          </a>
+          <a href="/login" class="border border-rose-500 text-rose-500 py-2 px-4 rounded-full hover:bg-rose-50 transition-colors">
+            Se connecter
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
 
         <main class="flex-grow flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
             <div class="max-w-md w-full">
