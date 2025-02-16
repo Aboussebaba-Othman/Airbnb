@@ -30,6 +30,7 @@ CREATE TABLE Annonces (
     id SERIAL PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
     photo TEXT,
+    ville VARCHAR(100) NOT NULL ,
     prix DECIMAL(10,2) NOT NULL,
     equipements TEXT, -- Stocke une liste d'équipements sous forme JSON
     description TEXT,
@@ -48,7 +49,7 @@ CREATE TABLE Reservations (
     datefin DATE NOT NULL,
     user_id INT NOT NULL,
     logement_id INT NOT NULL,
-    statut VARCHAR(50) NOT NULL DEFAULT 'confirmée', -- "confirmée", "annulée"
+    statut VARCHAR(50) NOT NULL DEFAULT 'en attante', -- "confirmée", "annulée"
     FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
     FOREIGN KEY (logement_id) REFERENCES Annonces(id) ON DELETE CASCADE
 );
