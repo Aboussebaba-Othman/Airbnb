@@ -17,7 +17,7 @@ class HomeController extends Controller {
                     $this->redirect('/property/index');
                     break;
                 case 'voyageur':
-                    $this->redirect('/home/index');
+                    $this->redirect('/annonces');
                     break;
             }
         }

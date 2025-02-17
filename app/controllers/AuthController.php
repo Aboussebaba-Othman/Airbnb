@@ -11,14 +11,14 @@ class AuthController extends Controller {
     protected User $userModel;
     protected Validation $validation;
     protected Session $session;
-    // private SocialAuthService $socialAuth;
+    private SocialAuthService $socialAuth;
 
     public function __construct() {
         parent::__construct();
         $this->userModel = new User();
         $this->session = Session::getInstance(); 
         $this->validation = new Validation();
-        // $this->socialAuth = new SocialAuthService();
+        $this->socialAuth = new SocialAuthService();
     }
 
     public function googleAuth() {
@@ -57,10 +57,9 @@ class AuthController extends Controller {
                 break;
             case 'proprietaire':
                 $this->redirect('/property/index');
-                $this->redirect('/property/index');
                 break;
             case 'voyageur':
-                $this->redirect('/traveler/dashboard');
+                $this->redirect('/annonces');
                 break;
             default:
                 error_log("Role non reconnu : " . $role);
@@ -210,12 +209,12 @@ class AuthController extends Controller {
         }
     }
 
-    // public function completeRegistration() {
-    //     $tempData = $this->session->get('temp_google_data') ?? $this->session->get('temp_facebook_data');
+    public function completeRegistration() {
+        $tempData = $this->session->get('temp_google_data') ?? $this->session->get('temp_facebook_data');
         
-    //     if (!$tempData) {
-    //         $this->redirect('/login');
-    //     }
+        if (!$tempData) {
+            $this->redirect('/login');
+        }
     
         if ($this->isPost()) {
             $data = $this->getBody();
@@ -225,11 +224,11 @@ class AuthController extends Controller {
                 'password_confirm' => $data['password_confirm'] ?? ''
             ];
     
-    //         $rules = [
-    //             'role' => ['required'],
-    //             'password' => ['required', 'min:6'],
-    //             'password_confirm' => ['required']
-    //         ];
+            $rules = [
+                'role' => ['required'],
+                'password' => ['required', 'min:6'],
+                'password_confirm' => ['required']
+            ];
     
             if (!$this->validation->validate($data, $rules)) {
                 return $this->view('auth/complete-registration', [
@@ -252,60 +251,59 @@ class AuthController extends Controller {
                 'photo' => $tempData['picture']
             ];
     
-    //         if ($this->userModel->create($userData)) {
-    //             $this->session->remove('temp_google_data');
-    //             $this->session->remove('temp_facebook_data');
+            if ($this->userModel->create($userData)) {
+                $this->session->remove('temp_google_data');
+                $this->session->remove('temp_facebook_data');
                 
                 $user = $this->userModel->findByEmail($tempData['email']);
-                // Add session regeneration before setting user data
                 $this->session->regenerate();
                 $this->session->setUserData($user);
                 
-    //             $this->session->setFlash('success', 'Compte créé avec succès');
-    //             $this->redirectBasedOnRole();
-    //         } else {
-    //             $this->session->setFlash('error', 'Erreur lors de la création du compte');
-    //             return $this->view('auth/complete-registration');
-    //         }
-    //     }
+                $this->session->setFlash('success', 'Compte créé avec succès');
+                $this->redirectBasedOnRole();
+            } else {
+                $this->session->setFlash('error', 'Erreur lors de la création du compte');
+                return $this->view('auth/complete-registration');
+            }
+        }
     
-    //     return $this->view('auth/complete-registration', [
-    //         'socialData' => $tempData
-    //     ]);
-    // }
-    // public function facebookAuth() {
-    //     $authUrl = $this->socialAuth->getFacebookAuthUrl();
-    //     $this->redirect($authUrl);
-    // }
+        return $this->view('auth/complete-registration', [
+            'socialData' => $tempData
+        ]);
+    }
+    public function facebookAuth() {
+        $authUrl = $this->socialAuth->getFacebookAuthUrl();
+        $this->redirect($authUrl);
+    }
     
-    // public function facebookCallback() {
-    //     try {
-    //         if (!isset($_GET['code'])) {
-    //             throw new \Exception('Code Facebook manquant');
-    //         }
+    public function facebookCallback() {
+        try {
+            if (!isset($_GET['code'])) {
+                throw new \Exception('Code Facebook manquant');
+            }
     
-    //         $userData = $this->socialAuth->handleFacebookCallback($_GET['code']);
+            $userData = $this->socialAuth->handleFacebookCallback($_GET['code']);
             
-    //         $user = $this->userModel->findByEmail($userData['email']);
+            $user = $this->userModel->findByEmail($userData['email']);
             
-    //         if ($user) {
-    //             $this->session->setUserData($user);
-    //             $this->redirectBasedOnRole();
-    //         } else {
-    //             $this->session->set('temp_facebook_data', [
-    //                 'email' => $userData['email'],
-    //                 'name' => $userData['name'],
-    //                 'picture' => $userData['picture']
-    //             ]);
+            if ($user) {
+                $this->session->setUserData($user);
+                $this->redirectBasedOnRole();
+            } else {
+                $this->session->set('temp_facebook_data', [
+                    'email' => $userData['email'],
+                    'name' => $userData['name'],
+                    'picture' => $userData['picture']
+                ]);
                 
-    //             $this->redirect('/auth/complete-registration');
-    //         }
+                $this->redirect('/auth/complete-registration');
+            }
     
-    //     } catch (\Exception $e) {
-    //         $this->session->setFlash('error', 'Erreur lors de la connexion avec Facebook');
-    //         $this->redirect('/login');
-    //     }
-    // }
+        } catch (\Exception $e) {
+            $this->session->setFlash('error', 'Erreur lors de la connexion avec Facebook');
+            $this->redirect('/login');
+        }
+    }
 
    
 }
