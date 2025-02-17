@@ -32,15 +32,9 @@ abstract class Controller {
         }
     }
 
-    protected function json($data) {
-        ob_clean();
-        header('Content-Type: application/json');
-        echo json_encode($data);
-    }
-
     protected function redirect($url) {
         ob_clean();
-        header("Location:$url");
+        header("Location: $url");
         exit;
     }
 

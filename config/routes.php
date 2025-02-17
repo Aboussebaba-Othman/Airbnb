@@ -1,4 +1,3 @@
-
 <?php
 use Core\Router;
 
@@ -35,8 +34,8 @@ Router::add('GET', 'admin/users/toggle-status/{id}', 'UserController', 'toggleSt
 Router::add('GET', 'admin/validation', 'AdminAnnonceController', 'validation');
 Router::add('GET', 'admin/toggle-validation/{id}', 'AdminAnnonceController', 'toggleValidation');
 
-
-
+Router::add('GET', 'profile/edit', 'ProfileController', 'edit');
+Router::add('POST', 'profile/edit', 'ProfileController', 'update');
 
 
 
