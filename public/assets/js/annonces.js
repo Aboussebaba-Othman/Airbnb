@@ -55,7 +55,7 @@ async function GetAnnonces(isfilter , name) {
         </div>
       </div>
     `
-  }) : document.getElementById("annonces").innerHTML = `7bibna`)
+  }) : document.getElementById("annonces").innerHTML = `aucune annonce`)
   
   isloading = false ;
 }
@@ -74,4 +74,5 @@ async function onchangeSearchbar(event) {
 async function filterbycategorie(event){
   !isloading && GetAnnonces(true ,event.target.textContent);
 }
+
 

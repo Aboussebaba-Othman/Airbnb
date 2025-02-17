@@ -10,7 +10,7 @@ class PaiementController
 
     public function __construct()
     {
-        $this->paypalService = new PayPalService();
+        // $this->paypalService = new PayPalService();
     }
 
     /**
@@ -18,20 +18,21 @@ class PaiementController
      *
      * @param int $reservationId
      */
-    public function showPaiement($reservationId)
+    public function showPaiement($id) // @param $reservationId
     {
         // Récupérer les détails de la réservation
         $reservationModel = new \App\Models\ReservationModel();
-        $reservation = $reservationModel->getAnnonceById($reservationId);
+        $reservation = $reservationModel->getReservationById($id);
 
         if (!$reservation) {
             die("Réservation non trouvée.");
         }
 
         View::render('paiement.twig', [
-            'reservationId' => $reservationId,
+            'reservationId' => $id,
             'reservation' => $reservation,
         ]);
+        //  View::render('paiement.twig', []);
     }
 
     /**
@@ -83,7 +84,7 @@ class PaiementController
         if ($this->paypalService->executePayment($paymentId, $payerId)) {
             // Mettre à jour la base de données
             $paiementModel = new \App\Models\PaiementModel();
-            $paiementModel->addPaiement($reservationId, $paymentId, 'PayPal');
+            // $paiementModel->addPaiement($reservationId, $paymentId, 'PayPal');
 
             // Afficher une page de succès
             View::render('paiement_success.twig', ['reservationId' => $reservationId]);
