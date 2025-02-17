@@ -36,17 +36,7 @@ class ReservationController
             $dateFin = trim($_POST['datefin']);
             $nbVoyageurs = intval($_POST['nbVoyageurs']);
 
-            print_r($userId );
-            echo '<br>';
-            print_r($annonceId);
-            echo '<br>';
-            print_r($dateDebut);
-            echo '<br>';
-            print_r($dateFin);
-            echo '<br>';
-            print_r($nbVoyageurs);
-         
-
+        
           
             if (empty($dateDebut) || empty($dateFin) || $dateDebut >= $dateFin) {
                 die("Erreur : Dates invalides.");

@@ -1,7 +1,7 @@
 <?php
 namespace App\Controllers;
 
-use App\Services\PayPalService;
+// use App\Services\PayPalService;
 use Core\View;
 
 class PaiementController
@@ -16,9 +16,9 @@ class PaiementController
     /**
      * Affiche la page de paiement.
      *
-     * @param int $reservationId
+     * @param int $id
      */
-    public function showPaiement($id) // @param $reservationId
+    public function showPaiement($id)
     {
         // Récupérer les détails de la réservation
         $reservationModel = new \App\Models\ReservationModel();
@@ -32,7 +32,6 @@ class PaiementController
             'reservationId' => $id,
             'reservation' => $reservation,
         ]);
-        //  View::render('paiement.twig', []);
     }
 
     /**
@@ -44,7 +43,7 @@ class PaiementController
     {
         // Récupérer les détails de la réservation
         $reservationModel = new \App\Models\ReservationModel();
-        $reservation = $reservationModel->getAnnonceById($reservationId);
+        $reservation = $reservationModel->getReservationById($reservationId);
 
         var_dump($reservation);
         if (!$reservation) {

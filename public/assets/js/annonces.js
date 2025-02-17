@@ -1,13 +1,12 @@
 let isloading = false;
 
-//
 document.addEventListener("DOMContentLoaded" , ()=>{
   GetAnnonces(false);
 })
 
 //
 async function GetAnnonces(isfilter , name) {
-  // if(document.getElementById('searchvalue').value.length > 10) return;
+  if(document.getElementById('searchvalue').value.length > 10) return;
   isloading = true ;
   document.getElementById("annonces").innerHTML = `
   <div class="absolute inset-0 mt-22 flex justify-center items-center">
@@ -65,12 +64,6 @@ async function onchangeSearchbar(event) {
     !isloading && GetAnnonces(false ,document.getElementById('searchvalue').value);
 }
 
-//
-async function onchangeSearchbar(event) {
-  !isloading && GetAnnonces(false ,document.getElementById('searchvalue').value);
-}
-
-//
 async function filterbycategorie(event){
   !isloading && GetAnnonces(true ,event.target.textContent);
 }
