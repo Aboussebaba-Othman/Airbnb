@@ -10,5 +10,5 @@ RewriteRule ^(.*)$ index.php [QSA,L]
 
 # Prevent direct access to .php files except index.php
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s([^.]+)\.php [NC]
-RewriteCond %{REQUEST_FILENAME} !^/index\.php
+RewriteCond %{REQUEST_FILENAME} !^/index\.twig
 RewriteRule ^ - [F]

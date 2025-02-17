@@ -1,7 +1,7 @@
 <?php
 namespace App\Controllers;
 
-use App\Services\PayPalService;
+// use App\Services\PayPalService;
 use Core\View;
 
 class PaiementController
@@ -10,26 +10,26 @@ class PaiementController
 
     public function __construct()
     {
-        $this->paypalService = new PayPalService();
+        // $this->paypalService = new PayPalService();
     }
 
     /**
      * Affiche la page de paiement.
      *
-     * @param int $reservationId
+     * @param int $id
      */
-    public function showPaiement($reservationId)
+    public function showPaiement($id)
     {
         // Récupérer les détails de la réservation
         $reservationModel = new \App\Models\ReservationModel();
-        $reservation = $reservationModel->getAnnonceById($reservationId);
+        $reservation = $reservationModel->getReservationById($id);
 
         if (!$reservation) {
             die("Réservation non trouvée.");
         }
 
         View::render('paiement.twig', [
-            'reservationId' => $reservationId,
+            'reservationId' => $id,
             'reservation' => $reservation,
         ]);
     }
@@ -43,7 +43,7 @@ class PaiementController
     {
         // Récupérer les détails de la réservation
         $reservationModel = new \App\Models\ReservationModel();
-        $reservation = $reservationModel->getAnnonceById($reservationId);
+        $reservation = $reservationModel->getReservationById($reservationId);
 
         var_dump($reservation);
         if (!$reservation) {
@@ -83,7 +83,7 @@ class PaiementController
         if ($this->paypalService->executePayment($paymentId, $payerId)) {
             // Mettre à jour la base de données
             $paiementModel = new \App\Models\PaiementModel();
-            $paiementModel->addPaiement($reservationId, $paymentId, 'PayPal');
+            // $paiementModel->addPaiement($reservationId, $paymentId, 'PayPal');
 
             // Afficher une page de succès
             View::render('paiement_success.twig', ['reservationId' => $reservationId]);

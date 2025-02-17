@@ -4,7 +4,6 @@ namespace App\Controllers;
 use Core\Controller;
 use App\Models\User;
 use Core\Session;
-
 class UserController extends Controller {
     private $userModel;
     protected $session;

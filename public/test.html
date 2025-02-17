@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Réserver votre séjour</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="min-h-screen bg-gray-50 py-12">
+  <div class="container mx-auto px-4">
+    <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
+      <div class="p-8">
+        <h2 class="text-2xl font-bold mb-6">Réserver votre séjour</h2>
+        
+        <!-- Informations du logement -->
+        <div class="mb-8">
+          <img 
+            src="/api/placeholder/800/400" 
+            alt="Logement"
+            class="rounded-lg w-full h-64 object-cover"
+          />
+          <div class="mt-4">
+            <h3 class="text-xl font-semibold">Villa de luxe avec piscine</h3>
+            <p class="text-gray-600">Nice, France</p>
+          </div>
+        </div>
+
+        <!-- Formulaire de réservation -->
+        <div class="space-y-6">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Date d'arrivée
+              </label>
+              <div class="relative">
+                <input
+                  type="date"
+                  id="start-date"
+                  class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-rose-500"
+                />
+                <div class="absolute left-3 top-2.5 h-5 w-5 text-gray-400">
+                  <script>
+                    lucide.createIcons();
+                  </script>
+                  <i data-lucide="calendar"></i>
+                </div>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Date de départ
+              </label>
+              <div class="relative">
+                <input
+                  type="date"
+                  id="end-date"
+                  class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-rose-500"
+                />
+                <div class="absolute left-3 top-2.5 h-5 w-5 text-gray-400">
+                  <script>
+                    lucide.createIcons();
+                  </script>
+                  <i data-lucide="calendar"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Nombre de voyageurs
+            </label>
+            <div class="relative">
+              <select
+                id="guests"
+                class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-rose-500"
+              >
+                <option value="1">1 voyageur</option>
+                <option value="2">2 voyageurs</option>
+                <option value="3">3 voyageurs</option>
+                <option value="4">4 voyageurs</option>
+                <option value="5">5 voyageurs</option>
+                <option value="6">6 voyageurs</option>
+              </select>
+              <div class="absolute left-3 top-2.5 h-5 w-5 text-gray-400">
+                <script>
+                  lucide.createIcons();
+                </script>
+                <i data-lucide="users"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Résumé du prix -->
+          <div class="bg-gray-50 p-6 rounded-lg">
+            <h4 class="font-semibold mb-4">Résumé du prix</h4>
+            <div class="space-y-2">
+              <div class="flex justify-between">
+                <span>250€ x 3 nuits</span>
+                <span>750€</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Frais de service</span>
+                <span>75€</span>
+              </div>
+              <div class="flex justify-between font-bold pt-2 border-t">
+                <span>Total</span>
+                <span>825€</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bouton PayPal -->
+          <div id="paypal-button-container" class="mt-6"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Intégration PayPal
+    paypal.Buttons({
+      createOrder: function(data, actions) {
+        return actions.order.create({
+          purchase_units: [{
+            amount: {
+              value: '825.00' // Prix total
+            }
+          }]
+        });
+      },
+      onApprove: function(data, actions) {
+        return actions.order.capture().then(function(details) {
+          alert('Transaction completed by ' + details.payer.name.given_name);
+        });
+      }
+    }).render('#paypal-button-container');
+  </script>
+</body>
+</html>

@@ -12,14 +12,17 @@
     <div class="container mx-auto px-4 py-4">
       <div class="flex items-center justify-between">
 
-        <a href="#" class="flex items-center space-x-2">
+        <a href="/" class="flex items-center space-x-2">
           <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Airbnb_Logo_B%C3%A9lo.svg/800px-Airbnb_Logo_B%C3%A9lo.svg.png" alt="Logo Airbnb" class="h-8">
         </a>
 
       
         <div class="relative w-96">
           <input
+            onkeyup="onchangeSearchbar(event)"
+            id="searchvalue"
             type="text"
+            maxlength="10"
             placeholder="Rechercher..."
             class="pl-10 pr-4 py-2 border rounded-full w-full focus:outline-none focus:ring-2 focus:ring-rose-500"
           />
@@ -43,7 +46,7 @@
 
 
 <div class="container mx-auto px-4 py-6">
-    <div class="flex justify-center space-x-8 overflow-x-auto pb-4">
+    <div onclick="filterbycategorie(event)" class="flex justify-center space-x-8 overflow-x-auto pb-4">
       <button class="flex flex-col items-center space-y-2 min-w-[80px] text-rose-500">
         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 22l9-4.5-9-4.5-9 4.5 9 4.5z"></path>
@@ -77,6 +80,7 @@
 
 
   <main class="container mx-auto px-4 py-8">
+    <div id="annonces" class="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
       <div class="group">
         <div class="relative aspect-square rounded-xl overflow-hidden">
@@ -111,5 +115,6 @@
       </div>
     </div>
   </main>
+  <script src="./assets/js/annonces.js"></script>
 </body>
 </html>
