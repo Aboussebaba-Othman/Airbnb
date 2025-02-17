@@ -81,16 +81,19 @@
                 <button class="p-2 hover:bg-gray-100 rounded-full">
                     <i class="fas fa-bell text-gray-600"></i>
                 </button>
-                <div class="flex items-center space-x-3">
-                    <div class="w-12 h-12 rounded-full ring-2 ring-primary ring-offset-2 overflow-hidden">
-                        <img src="/api/placeholder/48/48" alt="User Avatar" class="w-full h-full object-cover" />
+
+                <a href="/profile/edit">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 rounded-full ring-2 ring-primary ring-offset-2 overflow-hidden">
+                            <img src="<?php echo $_SESSION['username']; ?>" alt="User Avatar" class="w-full h-full object-cover" />
+                        </div>
+                        <div>
+                            <span
+                                class="text-gray-800 font-semibold text-base block"><?php echo $_SESSION['username']; ?></span>
+                            <span class="text-gray-500 text-xs">Administrateur</span>
+                        </div>
                     </div>
-                    <div>
-                        <span
-                            class="text-gray-800 font-semibold text-base block"><?php echo $_SESSION['username']; ?></span>
-                        <span class="text-gray-500 text-xs">Administrateur</span>
-                    </div>
-                </div>
+                </a>
             </div>
         </header>
 

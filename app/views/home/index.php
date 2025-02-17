@@ -30,10 +30,10 @@
 
 
         <div class="flex space-x-4">
-          <a href="#" class="bg-rose-500 text-white py-2 px-4 rounded-full hover:bg-rose-600 transition-colors">
+          <a href="/register" class="bg-rose-500 text-white py-2 px-4 rounded-full hover:bg-rose-600 transition-colors">
             S'inscrire
           </a>
-          <a href="#" class="border border-rose-500 text-rose-500 py-2 px-4 rounded-full hover:bg-rose-50 transition-colors">
+          <a href="/login" class="border border-rose-500 text-rose-500 py-2 px-4 rounded-full hover:bg-rose-50 transition-colors">
             Se connecter
           </a>
         </div>
@@ -101,9 +101,11 @@
           <p class="font-medium">250€ / nuit</p>
          
           <div class="flex justify-end">
+            <a href="/annonces">
             <button class="bg-rose-500 text-white py-2 px-4 rounded-lg hover:bg-rose-600 transition-colors">
               Réserver
             </button>
+            </a>
           </div>
         </div>
       </div>
