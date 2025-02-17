@@ -11,6 +11,6 @@ class TravelerController extends Controller {
     }
 
     public function index() {
-        return $this->view('traveler/dashboard');
+        return $this->view('home/index');
     }
 }

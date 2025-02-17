@@ -50,4 +50,22 @@ class User extends Model {
         $stmt = $this->db->prepare($query);
         return $stmt->execute($data);
     }
+    public function updateProfile($userId, $data) {
+        return $this->update($userId, $data);
+    }
+
+    public function checkUniqueFields($username, $email, $excludeUserId = null) {
+        $query = "SELECT COUNT(*) FROM {$this->table} WHERE (username = :username OR email = :email)";
+        $params = [
+            'username' => $username,
+            'email' => $email
+        ];
+
+        if ($excludeUserId) {
+            $query .= " AND id != :id";
+            $params['id'] = $excludeUserId;
+        }
+
+        return $this->queryScalar($query, $params) == 0;
+    }
 }

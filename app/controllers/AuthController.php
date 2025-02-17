@@ -27,12 +27,9 @@ class AuthController extends Controller {
     }
 
     public function login() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $data = [
-                'email' => $_POST['email'] ?? '',
-                'password' => $_POST['password'] ?? ''
-            ];
-
+        if ($this->isPost()) {
+            $data = $this->getBody();
+            
             $user = $this->userModel->findByEmail($data['email']);
             
             if (!$user || !password_verify($data['password'], $user['password'])) {
@@ -41,12 +38,13 @@ class AuthController extends Controller {
                     'email' => $data['email']
                 ]);
             }
-
+    
+            $this->session->regenerate();
             $this->session->setUserData($user);
             $this->redirectBasedOnRole();
             return;
         }
-
+    
         return $this->view('auth/login');
     }
 
@@ -58,10 +56,10 @@ class AuthController extends Controller {
                 $this->redirect('/admin/dashboard');
                 break;
             case 'proprietaire':
-                $this->redirect('/owner/dashboard');
+                $this->redirect('/property/index');
                 break;
             case 'voyageur':
-                $this->redirect('/traveler/dashboard');
+                $this->redirect('/annonces');
                 break;
             default:
                 error_log("Role non reconnu : " . $role);
@@ -79,51 +77,43 @@ class AuthController extends Controller {
             $this->redirectBasedOnRole();
         }
     
-        if (!$this->isPost()) {
-            return $this->view('auth/register');
+        if ($this->isPost()) {
+            $data = $this->getBody();
+            
+            $data['description'] = $data['description'] ?? '';
+            $data['role'] = $data['role'] ?? 'voyageur';
+    
+            if ($error = $this->validateRegistration($data)) {
+                return $error;
+            }
+    
+            $photo = $this->processPhoto();
+            if (is_string($photo) === false && $photo !== null) {
+                return $this->view('auth/register', [
+                    'error' => 'Erreur lors de l\'upload de la photo',
+                    'old' => $data
+                ]);
+            }
+    
+            $userData = [
+                'username' => $data['username'],
+                'email' => $data['email'],
+                'password' => password_hash($data['password'], PASSWORD_DEFAULT),
+                'role_id' => $this->getRoleId($data['role']),
+                'photo' => $photo,
+                'description' => $data['description']
+            ];
+    
+            if ($this->userModel->create($userData)) {
+                $this->session->setFlash('success', 'Compte créé avec succès. Vous pouvez maintenant vous connecter.');
+                return $this->redirect('/login');
+            }
+    
+            $this->session->setFlash('error', 'Erreur lors de la création du compte');
+            return $this->view('auth/register', ['old' => $data]);
         }
     
-        $data = $this->collectFormData();
-    
-        if ($error = $this->validateRegistration($data)) {
-            return $error;
-        }
-    
-        $photo = $this->processPhoto();
-        if (is_string($photo) === false && $photo !== null) {
-            return $this->view('auth/register', [
-                'error' => 'Erreur lors de l\'upload de la photo',
-                'old' => $data
-            ]);
-        }
-    
-        $userData = [
-            'username' => $data['username'],
-            'email' => $data['email'],
-            'password' => password_hash($data['password'], PASSWORD_DEFAULT),
-            'role_id' => $this->getRoleId($data['role']),
-            'photo' => $photo,
-            'description' => $data['description']
-        ];
-    
-        if ($this->userModel->create($userData)) {
-            $this->session->setFlash('success', 'Compte créé avec succès. Vous pouvez maintenant vous connecter.');
-            return $this->redirect('/login');
-        }
-    
-        $this->session->setFlash('error', 'Erreur lors de la création du compte');
-        return $this->view('auth/register', ['old' => $data]);
-    }
-    
-    private function collectFormData() {
-        return [
-            'username' => $_POST['username'] ?? '',
-            'email' => $_POST['email'] ?? '',
-            'password' => $_POST['password'] ?? '',
-            'password_confirm' => $_POST['password_confirm'] ?? '',
-            'role' => $_POST['role'] ?? 'voyageur',
-            'description' => $_POST['description'] ?? ''
-        ];
+        return $this->view('auth/register');
     }
     
     private function validateRegistration($data) {
@@ -195,27 +185,27 @@ class AuthController extends Controller {
     }
 
     public function googleCallback() {
-    try {
-        $userData = $this->socialAuth->handleGoogleCallback($_GET['code']);
-        
-        $user = $this->userModel->findByEmail($userData['email']);
-        
-        if ($user) {
-            $this->session->setUserData($user);
-            $this->redirectBasedOnRole();
-        } else {
-            $this->session->set('temp_google_data', [
-                'email' => $userData['email'],
-                'name' => $userData['name'],
-                'picture' => $userData['picture']
-            ]);
+        try {
+            $userData = $this->socialAuth->handleGoogleCallback($_GET['code']);
             
-            $this->redirect('/auth/complete-registration');
-        }
-
+            $user = $this->userModel->findByEmail($userData['email']);
+            
+            if ($user) {
+                $this->session->regenerate();
+                $this->session->setUserData($user);
+                $this->redirectBasedOnRole();
+            } else {
+                $this->session->set('temp_google_data', [
+                    'email' => $userData['email'],
+                    'name' => $userData['name'],
+                    'picture' => $userData['picture']
+                ]);
+                
+                $this->redirect('/auth/complete-registration');
+            }
         } catch (\Exception $e) {
-        $this->session->setFlash('error', 'Erreur lors de la connexion avec Google');
-        $this->redirect('/login');
+            $this->session->setFlash('error', 'Erreur lors de la connexion avec Google');
+            $this->redirect('/login');
         }
     }
 
@@ -226,11 +216,12 @@ class AuthController extends Controller {
             $this->redirect('/login');
         }
     
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($this->isPost()) {
+            $data = $this->getBody();
             $data = [
-                'role' => $_POST['role'] ?? '',
-                'password' => $_POST['password'] ?? '',
-                'password_confirm' => $_POST['password_confirm'] ?? ''
+                'role' => $data['role'] ?? '',
+                'password' => $data['password'] ?? '',
+                'password_confirm' => $data['password_confirm'] ?? ''
             ];
     
             $rules = [
@@ -241,15 +232,17 @@ class AuthController extends Controller {
     
             if (!$this->validation->validate($data, $rules)) {
                 return $this->view('auth/complete-registration', [
-                    'errors' => $this->validation->getErrors()
+                    'errors' => $this->validation->getErrors(),
+                    'socialData' => $tempData 
                 ]);
             }
     
             if ($data['password'] !== $data['password_confirm']) {
                 $this->session->setFlash('error', 'Les mots de passe ne correspondent pas');
-                return $this->view('auth/complete-registration');
-            }
-            
+                return $this->view('auth/complete-registration', [
+                    'socialData' => $tempData
+                ]);
+            }    
             $userData = [
                 'username' => $tempData['name'],
                 'email' => $tempData['email'],
@@ -263,6 +256,7 @@ class AuthController extends Controller {
                 $this->session->remove('temp_facebook_data');
                 
                 $user = $this->userModel->findByEmail($tempData['email']);
+                $this->session->regenerate();
                 $this->session->setUserData($user);
                 
                 $this->session->setFlash('success', 'Compte créé avec succès');
