@@ -1,0 +1,72 @@
+{% extends 'base.twig' %}
+
+{% block title %}Réservation - {{ annonce.title }}{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-2 gap-10">
+    
+    <!-- Partie Gauche : Image et Détails -->
+    <div class="bg-white shadow-xl rounded-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl">
+        <img src="{{ annonce.photo }}" alt="{{ annonce.title }}" class="w-full h-80 object-cover group-hover:opacity-80 transition-opacity duration-300">
+
+        <div class="p-6">
+            <h1 class="text-4xl font-semibold text-gray-800">{{ annonce.title }}</h1>
+            <p class="text-lg text-gray-500 mt-4">{{ annonce.description }}</p>
+
+            <div class="flex items-center justify-between mt-6">
+                <span class="text-3xl font-semibold text-teal-500">{{ annonce.prix }} € / nuit</span>
+                <span class="text-sm text-gray-400">{{ annonce.categorie | capitalize }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Partie Droite : Formulaire de réservation -->
+    <div class="bg-white shadow-xl rounded-lg p-8 flex flex-col justify-between">
+        <div>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Réservez maintenant</h2>
+
+           <form action="/reserver" method="POST" class="space-y-6">
+    <input type="hidden" name="annonce_id" value="{{ annonce.id }}">
+
+    <div class="flex flex-col">
+        <label for="datedebut">Date d'arrivée</label>
+        <input type="date" id="datedebut" name="datedebut" required>
+    </div>
+
+    <div class="flex flex-col">
+        <label for="datefin">Date de départ</label>
+        <input type="date" id="datefin" name="datefin" required>
+    </div>
+
+    <div class="flex flex-col">
+        <label>Nombre de chambres</label>
+        <div class="flex items-center">
+            <button type="button" id="decrease" class="px-3 py-1 bg-gray-300">-</button>
+            <input type="text" id="nb_chambres" name="nb_chambres" value="1" class="text-center w-12">
+            <button type="button" id="increase" class="px-3 py-1 bg-gray-300">+</button>
+        </div>
+    </div>
+
+    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded">Réserver</button>
+</form>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- JavaScript pour gérer l'incrémentation et la décrémentation -->
+<script>
+    document.getElementById("increase").addEventListener("click", function() {
+    let input = document.getElementById("nb_chambres");
+    input.value = Math.min(parseInt(input.value) + 1, 5);
+});
+
+document.getElementById("decrease").addEventListener("click", function() {
+    let input = document.getElementById("nb_chambres");
+    input.value = Math.max(parseInt(input.value) - 1, 1);
+});
+
+</script>
+
+{% endblock %}
